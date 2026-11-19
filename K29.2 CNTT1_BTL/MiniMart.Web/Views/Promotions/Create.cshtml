@@ -1,0 +1,282 @@
+@model MiniMart.Web.Models.ViewModels.PromotionDto
+@{
+    ViewData["Title"] = "Tạo chương trình khuyến mãi";
+    var products = ViewBag.Products as List<MiniMart.Web.Models.Entities.Product> ?? new();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <h2 class="h4 mb-0 text-slate-900 fw-bold">Tạo chương trình khuyến mãi mới</h2>
+            <p class="text-muted small mb-0">Cấu hình thời gian áp dụng và danh mục sản phẩm được ưu đãi</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Thông tin chiến dịch -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-tag me-2 text-primary"></i>Thông tin chương trình</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Tên chương trình khuyến mãi <span class="text-danger">*</span></label>
+                    <input type="text" id="promoName" class="form-control" placeholder="Ví dụ: Giảm giá hè 10%, Mua 2 tặng 1..." required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Hình thức ưu đãi <span class="text-danger">*</span></label>
+                    <select id="promoType" class="form-select" onchange="onPromoTypeChanged()">
+                        <option value="PERCENTAGE">Giảm giá theo % (VD: Giảm 10%, 20%)</option>
+                        <option value="FIXED_AMOUNT">Giảm số tiền cố định (VD: Giảm 5,000đ)</option>
+                        <option value="BUY_X_GET_Y">Mua X tặng Y (VD: Mua 2 tặng 1)</option>
+                    </select>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Ngày bắt đầu <span class="text-danger">*</span></label>
+                        <input type="date" id="startDate" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Ngày kết thúc <span class="text-danger">*</span></label>
+                        <input type="date" id="endDate" class="form-control" value="@DateTime.Today.AddDays(7).ToString("yyyy-MM-dd")" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Mô tả chi tiết</label>
+                    <textarea id="promoDesc" rows="3" class="form-control" placeholder="Mô tả điều kiện hoặc ghi chú áp dụng..."></textarea>
+                </div>
+
+                <div class="form-check form-switch p-3 bg-light rounded-3 mb-3">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="isActive" checked>
+                    <label class="form-check-label fw-bold small" for="isActive">
+                        Kích hoạt chương trình ngay
+                    </label>
+                </div>
+
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary w-100 py-2 fw-medium shadow-sm" onclick="submitPromotion()">
+                        <i class="bi bi-check-circle me-1"></i> Lưu chương trình khuyến mãi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Bảng chọn sản phẩm áp dụng -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-box-seam me-2 text-primary"></i>Sản phẩm áp dụng khuyến mãi</h6>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="addNewItemRow()">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm sản phẩm
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0" id="itemsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50%;">Sản phẩm</th>
+                                <th style="width: 40%;" id="ruleHeaderTitle">Mức giảm (%)</th>
+                                <th style="width: 10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <!-- Rows added via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyNotice" class="text-center py-5 text-muted">
+                    <i class="bi bi-tags display-5 d-block mb-2 text-slate-300"></i>
+                    Chưa có sản phẩm nào. Nhấn "Thêm sản phẩm" để bắt đầu thiết lập.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        const products = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(products.Select(p => new {
+            id = p.Id,
+            name = p.Name,
+            code = p.ProductCode,
+            unit = p.Unit,
+            price = p.DefaultPrice ?? 0
+        })));
+
+        let rowCount = 0;
+
+        function onPromoTypeChanged() {
+            const type = document.getElementById('promoType').value;
+            const header = document.getElementById('ruleHeaderTitle');
+            if (type === 'PERCENTAGE') {
+                header.textContent = 'Mức giảm (%)';
+            } else if (type === 'FIXED_AMOUNT') {
+                header.textContent = 'Số tiền giảm (đ)';
+            } else {
+                header.textContent = 'Quy tắc mua tặng (Mua X tặng Y)';
+            }
+
+            // Update all existing rows
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            rows.forEach(r => {
+                const ruleCol = r.querySelector('.rule-col');
+                renderRuleInput(ruleCol, type);
+            });
+        }
+
+        function renderRuleInput(container, type, val1 = 10, val2 = 1) {
+            if (type === 'PERCENTAGE') {
+                container.innerHTML = `
+                    <div class="input-group input-group-sm">
+                        <input type="number" class="form-control text-center promo-val1" value="${val1 || 10}" min="1" max="100" />
+                        <span class="input-group-text">%</span>
+                    </div>
+                `;
+            } else if (type === 'FIXED_AMOUNT') {
+                container.innerHTML = `
+                    <div class="input-group input-group-sm">
+                        <input type="number" class="form-control text-end promo-val1" value="${val1 || 5000}" min="1000" step="1000" />
+                        <span class="input-group-text">đ</span>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small text-muted">Mua:</span>
+                        <input type="number" class="form-control form-control-sm text-center promo-val1" style="width: 70px;" value="${val1 || 2}" min="1" />
+                        <span class="small text-muted">Tặng:</span>
+                        <input type="number" class="form-control form-control-sm text-center promo-val2" style="width: 70px;" value="${val2 || 1}" min="1" />
+                    </div>
+                `;
+            }
+        }
+
+        function addNewItemRow() {
+            document.getElementById('emptyNotice').style.display = 'none';
+            rowCount++;
+            const rowId = `prow_${rowCount}`;
+            const type = document.getElementById('promoType').value;
+
+            let opts = '<option value="">-- Chọn sản phẩm áp dụng --</option>';
+            products.forEach(p => {
+                opts += `<option value="${p.id}">${p.name} (${p.code}) - ${p.price.toLocaleString('vi-VN')}đ</option>`;
+            });
+
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.innerHTML = `
+                <td>
+                    <select class="form-select form-select-sm product-select" required>
+                        ${opts}
+                    </select>
+                </td>
+                <td class="rule-col"></td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm p-1 border-0" onclick="removeRow('${rowId}')" title="Xóa">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            document.getElementById('itemsTableBody').appendChild(tr);
+            renderRuleInput(tr.querySelector('.rule-col'), type);
+        }
+
+        function removeRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) row.remove();
+
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            if (rows.length === 0) {
+                document.getElementById('emptyNotice').style.display = 'block';
+            }
+        }
+
+        async function submitPromotion() {
+            const name = document.getElementById('promoName').value;
+            if (!name) {
+                alert('Vui lòng nhập tên chương trình khuyến mãi.');
+                return;
+            }
+
+            const type = document.getElementById('promoType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const desc = document.getElementById('promoDesc').value;
+            const isActive = document.getElementById('isActive').checked;
+
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            if (rows.length === 0) {
+                alert('Vui lòng chọn ít nhất một sản phẩm tham gia khuyến mãi.');
+                return;
+            }
+
+            const items = [];
+            for (let r of rows) {
+                const prodId = r.querySelector('.product-select').value;
+                if (!prodId) {
+                    alert('Có sản phẩm chưa được chọn.');
+                    return;
+                }
+
+                const val1 = parseFloat(r.querySelector('.promo-val1')?.value) || 0;
+                const val2 = parseFloat(r.querySelector('.promo-val2')?.value) || 0;
+
+                items.push({
+                    productId: parseInt(prodId),
+                    discountPercent: type === 'PERCENTAGE' ? val1 : null,
+                    discountAmount: type === 'FIXED_AMOUNT' ? val1 : null,
+                    buyQty: type === 'BUY_X_GET_Y' ? parseInt(val1) : null,
+                    getQty: type === 'BUY_X_GET_Y' ? parseInt(val2) : null
+                });
+            }
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+            try {
+                const res = await fetch('/Promotions/Create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        promoType: type,
+                        startDate: startDate,
+                        endDate: endDate,
+                        description: desc,
+                        isActive: isActive,
+                        items: items
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/Promotions';
+                } else {
+                    alert(data.message || 'Lỗi khi lưu khuyến mãi.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối đến máy chủ.');
+            }
+        }
+
+        // Thêm dòng đầu tiên
+        addNewItemRow();
+    </script>
+}
+

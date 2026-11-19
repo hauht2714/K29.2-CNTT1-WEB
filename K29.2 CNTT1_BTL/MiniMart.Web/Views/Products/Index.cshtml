@@ -1,0 +1,140 @@
+@model IEnumerable<MiniMart.Web.Models.Entities.Product>
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+    var search = ViewBag.Search as string;
+    var categoryId = ViewBag.CategoryId as long?;
+    var status = ViewBag.Status as string ?? "ALL";
+    var categories = ViewBag.Categories as IEnumerable<MiniMart.Web.Models.Entities.Category> ?? new List<MiniMart.Web.Models.Entities.Category>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="fw-bold mb-1">Danh mục sản phẩm & Hàng hóa</h4>
+        <p class="text-muted small mb-0">Quản lý mã vạch, giá niêm yết, đơn vị tính và nhà cung cấp</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-controller="Categories" asp-action="Index" class="btn btn-outline-secondary rounded-3">
+            <i class="bi bi-folder2 me-1"></i> Quản lý danh mục
+        </a>
+        <a asp-action="Create" class="btn btn-primary rounded-3">
+            <i class="bi bi-plus-lg me-1"></i> Thêm sản phẩm
+        </a>
+    </div>
+</div>
+
+<div class="card-custom mb-4">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@search" class="form-control border-start-0" placeholder="Tìm theo tên SP, mã SP, mã vạch..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                <option value="">Tất cả danh mục</option>
+                @foreach (var c in categories)
+                {
+                    <option value="@c.Id" selected="@(categoryId == c.Id)">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select" onchange="this.form.submit()">
+                <option value="ALL" selected="@(status == "ALL")">Tất cả</option>
+                <option value="ACTIVE" selected="@(status == "ACTIVE")">Đang bán</option>
+                <option value="DISCONTINUED" selected="@(status == "DISCONTINUED")">Ngừng bán</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary w-100">Lọc</button>
+        </div>
+    </form>
+</div>
+
+<div class="card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="small text-muted">
+                    <th class="ps-3">Mã SP</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Mã vạch (Barcode)</th>
+                    <th>Danh mục</th>
+                    <th>ĐVT</th>
+                    <th>Giá niêm yết</th>
+                    <th>Tồn kho</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end pe-3">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var p in Model)
+                    {
+                        var totalStock = p.StoreProducts?.Sum(sp => sp.StockQuantity) ?? 0;
+
+                        <tr>
+                            <td class="ps-3 fw-bold text-primary">@p.ProductCode</td>
+                            <td class="fw-semibold text-dark">
+                                @p.Name
+                                @if (p.Supplier != null)
+                                {
+                                    <div class="text-muted" style="font-size: 11px;"><i class="bi bi-truck me-1"></i>@p.Supplier.Name</div>
+                                }
+                            </td>
+                            <td class="font-monospace small">
+                                <span class="badge bg-light text-dark border"><i class="bi bi-upc-scan me-1"></i>@(p.Barcode ?? "---")</span>
+                            </td>
+                            <td>@(p.Category?.Name ?? "---")</td>
+                            <td><span class="badge bg-secondary-subtle text-secondary">@p.Unit</span></td>
+                            <td class="fw-bold text-dark">@((p.DefaultPrice ?? 0).ToString("N0")) đ</td>
+                            <td>
+                                @if (totalStock <= 10)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1">@totalStock @p.Unit (Thấp)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">@totalStock @p.Unit</span>
+                                }
+                            </td>
+                            <td>
+                                @if (p.Status == "ACTIVE")
+                                {
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Đang bán</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">Ngừng bán</span>
+                                }
+                            </td>
+                            <td class="text-end pe-3">
+                                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary rounded-2 me-1" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="ToggleStatus" asp-route-id="@p.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn đổi trạng thái sản phẩm @p.Name?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-warning rounded-2" title="Đổi trạng thái">
+                                        <i class="bi bi-power"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-box-seam fs-1 d-block mb-2"></i>
+                            Không tìm thấy sản phẩm nào.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

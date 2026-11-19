@@ -1,0 +1,186 @@
+@model MiniMart.Web.Models.Entities.ImportReceipt
+@{
+    ViewData["Title"] = "Chi tiết phiếu nhập #" + Model.ReceiptCode;
+    var canApprove = (User.IsInRole("ADMIN") || User.IsInRole("STORE_MANAGER") || User.IsInRole("WAREHOUSE_STAFF")) && Model.Status == "DRAFT";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="h4 mb-0 text-slate-900 fw-bold">Phiếu nhập kho #@Model.ReceiptCode</h2>
+                @if (Model.Status == "COMPLETED")
+                {
+                    <span class="badge bg-success-subtle text-success border border-success-subtle fs-7">
+                        <i class="bi bi-check-circle me-1"></i> Đã nhập kho
+                    </span>
+                }
+                else if (Model.Status == "DRAFT")
+                {
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle fs-7">
+                        <i class="bi bi-clock me-1"></i> Bản nháp
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-7">
+                        <i class="bi bi-x-circle me-1"></i> Đã hủy
+                    </span>
+                }
+            </div>
+            <p class="text-muted small mb-0">Ngày nhập: @Model.ImportDate.ToString("dd/MM/yyyy") · Tạo lúc: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In phiếu
+        </button>
+        @if (canApprove)
+        {
+            <form asp-action="Confirm" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-success" onclick="return confirm('Bạn có chắc chắn muốn duyệt nhập kho phiếu này? Tồn kho và các lô hàng sẽ được cập nhật ngay lập tức.');">
+                    <i class="bi bi-check-lg me-1"></i> Duyệt nhập kho
+                </button>
+            </form>
+            <form asp-action="Cancel" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Bạn có chắc muốn hủy phiếu nháp này?');">
+                    <i class="bi bi-trash me-1"></i> Hủy phiếu
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Cột trái: Danh sách mặt hàng -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-box-seam me-2 text-primary"></i>Danh sách mặt hàng nhập kho</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Sản phẩm</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Đơn giá nhập</th>
+                            <th>Hạn sử dụng</th>
+                            <th class="text-end pe-4">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ImportReceiptItems)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-slate-900">@item.Product.Name</div>
+                                    <div class="small text-muted" style="font-size: 11px;">
+                                        Mã: <code>@item.Product.ProductCode</code>
+                                        · ĐVT: @item.Product.Unit
+                                    </div>
+                                </td>
+                                <td class="text-center fw-bold">@item.Quantity</td>
+                                <td class="text-end text-muted">@item.ImportPrice.ToString("N0")đ</td>
+                                <td>
+                                    @if (item.ExpiryDate.HasValue)
+                                    {
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-calendar me-1"></i>@item.ExpiryDate.Value.ToString("dd/MM/yyyy")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Không áp dụng</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-slate-900">@item.Subtotal.ToString("N0")đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light border-top">
+                        <tr>
+                            <th colspan="4" class="text-end pe-3 fw-bold">Tổng giá trị phiếu nhập:</th>
+                            <th class="text-end pe-4 fw-bold text-primary fs-6">@Model.TotalAmount.ToString("N0")đ</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Thông tin nhà cung cấp & người lập -->
+    <div class="col-lg-4">
+        <!-- Nhà cung cấp -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-building me-2 text-info"></i>Nhà cung cấp</h6>
+            </div>
+            <div class="card-body">
+                <div class="fw-bold text-slate-900 fs-6 mb-1">@Model.Supplier?.Name</div>
+                <div class="small text-muted mb-2">Mã NCC: <code>@Model.Supplier?.SupplierCode</code></div>
+                <div class="small mb-1"><i class="bi bi-telephone me-2 text-muted"></i>@(Model.Supplier?.Phone ?? "Chưa có SĐT")</div>
+                <div class="small mb-1"><i class="bi bi-envelope me-2 text-muted"></i>@(Model.Supplier?.Email ?? "Chưa có email")</div>
+                <div class="small"><i class="bi bi-geo-alt me-2 text-muted"></i>@(Model.Supplier?.Address ?? "Chưa có địa chỉ")</div>
+            </div>
+        </div>
+
+        <!-- Thông tin kho & nhân sự -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-shop me-2 text-primary"></i>Kho nhập & Nhân sự</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="small text-muted mb-1">Chi nhánh nhận hàng:</div>
+                    <div class="fw-bold">@Model.Store?.Name</div>
+                    <div class="small text-muted">@Model.Store?.Address</div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="small text-muted mb-1">Người lập phiếu:</div>
+                    <div class="fw-medium">@Model.CreatedByUser?.FullName</div>
+                    <div class="small text-muted">@@@Model.CreatedByUser?.Username</div>
+                </div>
+
+                @if (Model.ConfirmedByUser != null)
+                {
+                    <div class="mb-3">
+                        <div class="small text-muted mb-1">Người duyệt nhập:</div>
+                        <div class="fw-medium text-success"><i class="bi bi-check-circle me-1"></i>@Model.ConfirmedByUser?.FullName</div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Note))
+                {
+                    <div>
+                        <div class="small text-muted mb-1">Ghi chú:</div>
+                        <div class="p-2 bg-light rounded small text-slate-800">@Model.Note</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

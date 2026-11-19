@@ -1,0 +1,322 @@
+@model MiniMart.Web.Models.ViewModels.CreateImportReceiptDto
+@{
+    ViewData["Title"] = "Tạo phiếu nhập kho";
+    var suppliers = ViewBag.Suppliers as List<MiniMart.Web.Models.Entities.Supplier> ?? new();
+    var stores = ViewBag.Stores as List<MiniMart.Web.Models.Entities.Store> ?? new();
+    var products = ViewBag.Products as List<MiniMart.Web.Models.Entities.Product> ?? new();
+    var isAdmin = User.IsInRole("ADMIN");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <h2 class="h4 mb-0 text-slate-900 fw-bold">Tạo phiếu nhập kho mới</h2>
+            <p class="text-muted small mb-0">Nhập hàng từ nhà cung cấp, thiết lập hạn sử dụng và tự động tạo lô</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Thông tin chung phiếu nhập -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-info-circle me-2 text-primary"></i>Thông tin phiếu nhập</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Nhà cung cấp <span class="text-danger">*</span></label>
+                    <select id="supplierId" class="form-select" required>
+                        <option value="">-- Chọn nhà cung cấp --</option>
+                        @foreach (var s in suppliers)
+                        {
+                            <option value="@s.Id">@s.Name (@s.SupplierCode)</option>
+                        }
+                    </select>
+                </div>
+
+                @if (isAdmin)
+                {
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Chi nhánh nhập vào <span class="text-danger">*</span></label>
+                        <select id="storeId" class="form-select">
+                            @foreach (var st in stores)
+                            {
+                                <option value="@st.Id" selected="@(st.Id == ViewBag.UserStoreId)">@st.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" id="storeId" value="@ViewBag.UserStoreId" />
+                }
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Ngày nhập kho <span class="text-danger">*</span></label>
+                    <input type="date" id="importDate" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Ghi chú phiếu nhập</label>
+                    <textarea id="importNote" rows="3" class="form-control" placeholder="Số hóa đơn đỏ, thông tin giao hàng..."></textarea>
+                </div>
+
+                <div class="form-check form-switch p-3 bg-light rounded-3 mb-3">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="completeImmediately" checked>
+                    <label class="form-check-label fw-bold small" for="completeImmediately">
+                        Duyệt nhập kho ngay
+                    </label>
+                    <div class="text-muted" style="font-size: 11.5px;">Tự động cộng tồn kho và tạo mã lô hàng ngay khi lưu</div>
+                </div>
+
+                <!-- Thống kê tiền -->
+                <div class="p-3 bg-primary-subtle rounded-3 text-slate-900">
+                    <div class="d-flex justify-content-between mb-1 small">
+                        <span>Tổng số mặt hàng:</span>
+                        <strong id="summaryItemsCount">0</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span>Tổng số lượng nhập:</span>
+                        <strong id="summaryTotalQty">0</strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top border-primary-subtle pt-2">
+                        <span class="fw-bold">Tổng tiền nhập:</span>
+                        <span class="fs-5 fw-bold text-primary" id="summaryTotalAmount">0đ</span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary w-100 py-2 fw-medium shadow-sm" onclick="submitImportReceipt()">
+                        <i class="bi bi-check-circle me-1"></i> Lưu phiếu nhập kho
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Bảng thêm danh sách hàng hóa -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-box-seam me-2 text-primary"></i>Danh sách mặt hàng nhập</h6>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="addNewItemRow()">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm dòng hàng
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0" id="itemsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 32%;">Sản phẩm</th>
+                                <th style="width: 14%;" class="text-center">Số lượng</th>
+                                <th style="width: 20%;" class="text-end">Giá nhập (đ)</th>
+                                <th style="width: 18%;">Hạn sử dụng</th>
+                                <th style="width: 16%;" class="text-end">Thành tiền</th>
+                                <th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <!-- Dòng sản phẩm sẽ được thêm bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyNotice" class="text-center py-5 text-muted">
+                    <i class="bi bi-cart-plus display-5 d-block mb-2 text-slate-300"></i>
+                    Chưa có mặt hàng nào. Nhấn nút "Thêm dòng hàng" ở trên để bắt đầu.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        // Dữ liệu sản phẩm có sẵn
+        const productList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(products.Select(p => new {
+            id = p.Id,
+            name = p.Name,
+            code = p.ProductCode,
+            unit = p.Unit,
+            defaultPrice = p.DefaultPrice ?? 0,
+            lastPrice = p.LastImportPrice ?? (p.DefaultPrice.HasValue ? p.DefaultPrice.Value * 0.7m : 0)
+        })));
+
+        let rowCounter = 0;
+
+        function addNewItemRow() {
+            document.getElementById('emptyNotice').style.display = 'none';
+            rowCounter++;
+            const rowId = `row_${rowCounter}`;
+
+            let productOptions = '<option value="">-- Chọn sản phẩm --</option>';
+            productList.forEach(p => {
+                productOptions += `<option value="${p.id}" data-price="${p.lastPrice}" data-unit="${p.unit}">${p.name} (${p.code})</option>`;
+            });
+
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.innerHTML = `
+                <td>
+                    <select class="form-select form-select-sm product-select" onchange="onProductSelected('${rowId}')" required>
+                        ${productOptions}
+                    </select>
+                    <div class="small text-muted mt-1 unit-label" style="font-size: 11px;"></div>
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm text-center qty-input" value="1" min="1" oninput="calculateRow('${rowId}')" required />
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm text-end price-input" value="0" min="0" step="500" oninput="calculateRow('${rowId}')" required />
+                </td>
+                <td>
+                    <input type="date" class="form-control form-control-sm expiry-input" />
+                </td>
+                <td class="text-end fw-bold text-slate-800 row-subtotal">
+                    0đ
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm p-1 border-0" onclick="removeRow('${rowId}')" title="Xóa">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            document.getElementById('itemsTableBody').appendChild(tr);
+        }
+
+        function onProductSelected(rowId) {
+            const row = document.getElementById(rowId);
+            const select = row.querySelector('.product-select');
+            const selectedOpt = select.selectedOptions[0];
+            const price = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+            const unit = selectedOpt.getAttribute('data-unit') || '';
+
+            row.querySelector('.unit-label').textContent = unit ? `Đơn vị: ${unit}` : '';
+            row.querySelector('.price-input').value = price;
+            calculateRow(rowId);
+        }
+
+        function calculateRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (!row) return;
+
+            const qty = parseInt(row.querySelector('.qty-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const subtotal = Math.max(0, qty * price);
+
+            row.querySelector('.row-subtotal').textContent = subtotal.toLocaleString('vi-VN') + 'đ';
+            calculateTotals();
+        }
+
+        function removeRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) row.remove();
+
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            if (rows.length === 0) {
+                document.getElementById('emptyNotice').style.display = 'block';
+            }
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            let totalQty = 0;
+            let totalAmount = 0;
+
+            rows.forEach(r => {
+                const qty = parseInt(r.querySelector('.qty-input').value) || 0;
+                const price = parseFloat(r.querySelector('.price-input').value) || 0;
+                totalQty += qty;
+                totalAmount += (qty * price);
+            });
+
+            document.getElementById('summaryItemsCount').textContent = rows.length;
+            document.getElementById('summaryTotalQty').textContent = totalQty.toLocaleString('vi-VN');
+            document.getElementById('summaryTotalAmount').textContent = totalAmount.toLocaleString('vi-VN') + 'đ';
+        }
+
+        async function submitImportReceipt() {
+            const supplierId = document.getElementById('supplierId').value;
+            if (!supplierId) {
+                alert('Vui lòng chọn nhà cung cấp.');
+                return;
+            }
+
+            const storeId = document.getElementById('storeId').value;
+            const importDate = document.getElementById('importDate').value;
+            const note = document.getElementById('importNote').value;
+            const completeImmediately = document.getElementById('completeImmediately').checked;
+
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            if (rows.length === 0) {
+                alert('Vui lòng thêm ít nhất một sản phẩm cần nhập kho.');
+                return;
+            }
+
+            const items = [];
+            for (let r of rows) {
+                const prodId = r.querySelector('.product-select').value;
+                const qty = parseInt(r.querySelector('.qty-input').value) || 0;
+                const price = parseFloat(r.querySelector('.price-input').value) || 0;
+                const expiry = r.querySelector('.expiry-input').value || null;
+
+                if (!prodId) {
+                    alert('Có dòng hàng chưa chọn sản phẩm. Vui lòng kiểm tra lại.');
+                    return;
+                }
+                if (qty <= 0) {
+                    alert('Số lượng nhập phải lớn hơn 0.');
+                    return;
+                }
+
+                items.push({
+                    productId: parseInt(prodId),
+                    quantity: qty,
+                    importPrice: price,
+                    expiryDate: expiry
+                });
+            }
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+            try {
+                const res = await fetch('/Import/Create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        supplierId: parseInt(supplierId),
+                        storeId: parseInt(storeId),
+                        importDate: importDate,
+                        note: note,
+                        completeImmediately: completeImmediately,
+                        items: items
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = `/Import/Details/${data.receiptId}`;
+                } else {
+                    alert(data.message || 'Lỗi khi lưu phiếu nhập kho.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối đến máy chủ.');
+            }
+        }
+
+        // Tự động thêm 1 dòng mẫu ban đầu
+        addNewItemRow();
+    </script>
+}

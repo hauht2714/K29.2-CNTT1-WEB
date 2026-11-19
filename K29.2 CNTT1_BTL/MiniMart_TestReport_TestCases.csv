@@ -1,0 +1,509 @@
+﻿TEST REPORT,,,,,,,,,,,,
+,,,,,,,,,,,,
+No.,Test run Sprint (Sheet name),Total Testcase,Testing Result,,Excution,,Type,,,Regression/Retest,Status Testing,Progress
+,,,Chrome,,,,,,,,,
+,,,Passed,Failed,Automation,Manual,UI,API,Integration Testing,,,
+1,Test run Sprint 1 - Auth & System Config,35,35,0,12,23,12,12,11,0,Test Done,1.0
+2,Test run Sprint 2 - Master Data & Catalog,68,68,0,22,46,23,22,23,0,Test Done,1.0
+3,Test run Sprint 3 - POS Terminal & Invoices,55,53,2,18,37,18,12,25,2,Test Done,0.9636
+4,Test run Sprint 4 - Warehouse & Import,51,50,1,16,35,16,17,18,1,Test Done,0.9804
+5,Test run Sprint 5 - Transfers & Promotions,36,36,0,12,24,12,11,13,0,Test Done,1.0
+6,"Test run Sprint 6 - Analytics, Reports & Security",57,56,1,18,39,18,18,21,1,Test Done,0.9825
+,Total,302,298,4,98,204,99,92,111,4,,0.9868
+,,,0.9868,0.0132,0.3245,0.6755,0.3278,0.3046,0.3675,0.0132,,
+,,,,,,,,,,,,
+No.,Module,Total Testcase,Testing Result,,Type,,,Status Testing,Progress,,,
+,,,Chrome,,,,,,,,,
+,,,Passed,Failed,UI,API,Integration Testing,,,,,
+1,Đăng nhập & Phân quyền,20,20,0,7,7,6,Test Done,1.0,,,
+2,Đổi mật khẩu & Profile cá nhân,15,15,0,5,5,5,Test Done,1.0,,,
+3,Quản lý Chi nhánh (Stores),15,15,0,5,5,5,Test Done,1.0,,,
+4,Quản lý Nhân viên & Người dùng (Users),20,20,0,6,7,7,Test Done,1.0,,,
+5,Quản lý Danh mục hàng hóa (Categories),15,15,0,5,5,5,Test Done,1.0,,,
+6,Quản lý Nhà cung cấp (Suppliers),18,18,0,6,6,6,Test Done,1.0,,,
+7,Quản lý Hàng hóa & Sản phẩm (Products),25,25,0,8,8,9,Test Done,1.0,,,
+8,Quản lý Khách hàng & Thành viên (Customers),18,18,0,6,6,6,Test Done,1.0,,,
+9,Bán hàng tại quầy POS (Terminal),35,33,2,11,8,16,Test Done,0.9429,,,
+10,Quản lý Hóa đơn & Hoàn kho (Invoices),20,20,0,7,4,9,Test Done,1.0,,,
+11,Quản lý Tồn kho & Cảnh báo hạn (Inventory),20,20,0,6,6,8,Test Done,1.0,,,
+12,Quản lý Nhập kho NCC (Import),20,19,1,6,7,7,Test Done,0.9500,,,
+13,Điều chuyển kho nội bộ (Transfers),18,18,0,6,6,6,Test Done,1.0,,,
+14,Chương trình Khuyến mãi (Promotions),18,18,0,6,5,7,Test Done,1.0,,,
+15,Dashboard & Báo cáo thống kê (Reports),18,18,0,5,6,7,Test Done,1.0,,,
+16,"Phi chức năng, Bảo mật & Hiệu năng",17,16,1,4,6,7,Test Done,0.9412,,,
+,Total,302,298,4,99,92,111,,0.9868,,,
+,,,0.9868,0.0132,0.3278,0.3046,0.3675,,,,,
+,,,,,,,,,,,,
+Number of Modules,16,,Modules,Number of Test cases,Passed,Failed,UI,API,Integration Testing,,,
+Number of Test cases,302,,Đăng nhập & Phân quyền,20,20,0,7,7,6,,,
+Passed,298,,Đổi mật khẩu & Profile cá nhân,15,15,0,5,5,5,,,
+Failed,4,,Quản lý Chi nhánh & Người dùng,35,35,0,11,12,12,,,
+Automated,98,,"Danh mục, NCC & Sản phẩm",58,58,0,19,19,20,,,
+Manual,204,,Khách hàng & Bán hàng POS,53,51,2,17,14,22,,,
+UI,99,,Hóa đơn & Quản lý Kho,40,40,0,13,10,17,,,
+API,92,,Nhập hàng & Chuyển kho,38,37,1,12,13,13,,,
+Integration Testing,111,,Khuyến mãi & Báo cáo,36,36,0,11,11,14,,,
+,,,Bảo mật & Hiệu năng,17,16,1,4,6,7,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+case_id,title,parent_suite,child_suite,status,steps,steps_input_data,steps_expected_result,comment,priority,severity,automation
+1,Kiểm tra hiển thị đầy đủ giao diện trang đăng nhập,Đăng nhập & Phân quyền,UI,Passed,"1. Truy cập URL hệ thống /Account/Login
+2. Quan sát các thành phần trên trang","1. Link: http://localhost:7285/Account/Login
+2. ","1. Hệ thống điều hướng thành công vào trang đăng nhập
+2. Giao diện hiển thị chuẩn: Logo MiniMart, Tiêu đề, Ô nhập tài khoản, Ô nhập mật khẩu, Nút Đăng nhập",,High,Normal,Manual
+2,Mật khẩu được ẩn dưới dạng ký tự chấm tròn khi nhập,Đăng nhập & Phân quyền,UI,Passed,"1. Truy cập trang đăng nhập
+2. Nhập mật khẩu vào ô Password","1. 
+2. Mật khẩu: admin123","1. Trang đăng nhập hiển thị
+2. Ký tự mật khẩu bị ẩn hoàn toàn dưới dạng dấu chấm hoặc sao (*)",,Medium,Normal,Manual
+3,Kiểm tra nút ẩn / hiện mật khẩu hoạt động chính xác,Đăng nhập & Phân quyền,UI,Passed,"1. Nhập mật khẩu vào ô Password
+2. Click icon con mắt (Hiện mật khẩu)
+3. Click lại icon con mắt (Ẩn mật khẩu)","1. Password: AdminSecret@2026
+2. 
+3. ","1. Mật khẩu bị ẩn
+2. Mật khẩu hiển thị rõ ràng ký tự thô
+3. Mật khẩu trở về trạng thái ẩn",,Medium,Normal,Manual
+4,Đăng nhập bằng phím Enter từ bàn phím,Đăng nhập & Phân quyền,UI,Passed,"1. Nhập username và password
+2. Nhấn phím Enter trên bàn phím","1. Username: admin, Password: admin123
+2. Nhấn phím Enter","1. Form tự động submit mà không cần click chuột vào nút Đăng nhập
+2. Đăng nhập thành công vào trang chủ",,Medium,Minor,Manual
+5,Đăng nhập thất bại khi bỏ trống Tên đăng nhập (UI),Đăng nhập & Phân quyền,UI,Passed,"1. Để trống Tên đăng nhập
+2. Nhập mật khẩu
+3. Bấm Đăng nhập","1. Username: (trống)
+2. Password: admin123
+3. Click Đăng nhập","1. Hệ thống báo lỗi validation tại ô Tên đăng nhập: 'Vui lòng nhập tên đăng nhập'
+2. Không gửi request lên server",,High,Normal,Manual
+6,Đăng nhập thất bại khi bỏ trống Mật khẩu (UI),Đăng nhập & Phân quyền,UI,Passed,"1. Nhập Tên đăng nhập
+2. Để trống Mật khẩu
+3. Bấm Đăng nhập","1. Username: admin
+2. Password: (trống)
+3. Click Đăng nhập","1. Báo lỗi validation: 'Vui lòng nhập mật khẩu'
+2. Trạng thái dừng ở màn hình đăng nhập",,High,Normal,Manual
+7,Đăng nhập thất bại khi bỏ trống cả Tên đăng nhập và Mật khẩu (UI),Đăng nhập & Phân quyền,UI,Passed,"1. Không nhập bất kỳ thông tin nào
+2. Bấm Đăng nhập","1. Username: (trống), Password: (trống)
+2. Click Đăng nhập","1. Cả 2 ô nhập liệu hiển thị viền đỏ và thông báo yêu cầu nhập dữ liệu
+2. Không redirect",,High,Normal,Manual
+8,Đăng nhập thành công với tài khoản Quản trị viên ADMIN (API),Đăng nhập & Phân quyền,API,Passed,"1. Gửi POST /Account/Login với thông tin Admin
+2. Kiểm tra phản hồi HTTP và Cookie","1. Body: { username: 'admin', password: 'admin123' }
+2. ","1. HTTP Status Code 302 Found (Redirect về /)
+2. Thiết lập Cookie xác thực .AspNetCore.Cookies chứa Claim Role='ADMIN'
+3. Đăng nhập thành công",,High,Critical,Automated
+9,Đăng nhập thành công với tài khoản Quản lý chi nhánh STORE_MANAGER (API),Đăng nhập & Phân quyền,API,Passed,"1. Gửi POST /Account/Login với tài khoản Quản lý
+2. Kiểm tra Claims","1. Body: { username: 'manager', password: '123456' }
+2. ","1. HTTP Status Code 302 Found
+2. Claim Role='STORE_MANAGER' và Claim StoreId được nạp chính xác từ CSDL Oracle",,High,Critical,Automated
+10,Đăng nhập thành công với tài khoản Thu ngân CASHIER (API),Đăng nhập & Phân quyền,API,Passed,"1. Gửi POST /Account/Login với tài khoản Thu ngân
+2. Kiểm tra Claims","1. Body: { username: 'cashier', password: '123456' }
+2. ","1. HTTP Status Code 302 Found
+2. Claim Role='CASHIER', cho phép thao tác lập hóa đơn tại quầy POS",,High,Critical,Automated
+11,Đăng nhập thành công với tài khoản Nhân viên kho WAREHOUSE_STAFF (API),Đăng nhập & Phân quyền,API,Passed,"1. Gửi POST /Account/Login với tài khoản Thủ kho
+2. Kiểm tra Claims","1. Body: { username: 'warehouse', password: '123456' }
+2. ","1. HTTP Status Code 302 Found
+2. Claim Role='WAREHOUSE_STAFF', cho phép kiểm kho, nhập hàng và chuyển kho",,High,Critical,Automated
+12,Đăng nhập thất bại khi nhập sai mật khẩu (API),Đăng nhập & Phân quyền,API,Passed,"1. Gửi POST /Account/Login với mật khẩu không đúng
+2. Kiểm tra phản hồi","1. Body: { username: 'admin', password: 'sai_mat_khau_123' }
+2. ","1. HTTP Status Code 200 OK trả lại trang đăng nhập
+2. Response body chứa thông báo: 'Tên đăng nhập hoặc mật khẩu không chính xác'
+3. Không sinh Cookie phiên làm việc",,High,Major,Automated
+13,Đăng nhập thất bại khi tên đăng nhập không tồn tại (API),Đăng nhập & Phân quyền,API,Passed,"1. Gửi POST /Account/Login với username không có trong DB
+2. Kiểm tra phản hồi","1. Body: { username: 'user_khong_ton_tai_999', password: '123' }
+2. ","1. Hệ thống truy vấn bảng USERS trả về null
+2. Thông báo lỗi: 'Tên đăng nhập hoặc mật khẩu không chính xác' (bảo mật không làm lộ việc username có tồn tại hay không)",,High,Major,Automated
+14,Đăng nhập thất bại khi tài khoản bị khóa (Status = INACTIVE),Đăng nhập & Phân quyền,API,Passed,"1. Tài khoản có Status = 'INACTIVE' trong Oracle
+2. Đăng nhập đúng mật khẩu
+3. Kiểm tra phản hồi","1. Username: nv_khoa, Password: đúng_123
+2. 
+3. ","1. Đăng nhập bị từ chối
+2. Thông báo: 'Tài khoản của bạn đã bị tạm khóa hoặc ngừng hoạt động. Vui lòng liên hệ quản trị viên.'",,High,Major,Automated
+15,Kiểm tra phân quyền: Thu ngân CASHIER bị chặn truy cập Quản trị Nhân viên (/Users),Đăng nhập & Phân quyền,Integration Testing,Passed,"1. Đăng nhập tài khoản cashier
+2. Nhập URL /Users trực tiếp trên thanh địa chỉ
+3. Quan sát phản hồi","1. Login: cashier
+2. URL: http://localhost:7285/Users
+3. ","1. Middleware Authorize(Roles = 'ADMIN') phát hiện vai trò CASHIER không có quyền
+2. Tự động điều hướng về /Account/AccessDenied với thông báo: 'Bạn không có quyền truy cập chức năng này'",,High,Critical,Automated
+16,Kiểm tra phân quyền: Thu ngân CASHIER bị chặn truy cập Quản trị Chi nhánh (/Stores),Đăng nhập & Phân quyền,Integration Testing,Passed,"1. Đăng nhập tài khoản cashier
+2. Nhập URL /Stores
+3. Quan sát kết quả","1. Login: cashier
+2. URL: /Stores
+3. ","1. Hệ thống chặn truy cập ngay lập tức
+2. Redirect về /Account/AccessDenied",,High,Critical,Automated
+17,Kiểm tra phân quyền: Nhân viên kho WAREHOUSE_STAFF bị chặn truy cập Bán hàng POS (/Pos),Đăng nhập & Phân quyền,Integration Testing,Passed,"1. Đăng nhập tài khoản warehouse
+2. Nhập URL /Pos trên trình duyệt
+3. Quan sát phản hồi","1. Login: warehouse
+2. URL: /Pos
+3. ","1. PosController có Authorize(Roles = 'ADMIN,STORE_MANAGER,CASHIER')
+2. Tài khoản warehouse bị chặn và điều hướng về AccessDenied",,High,Critical,Automated
+18,Kiểm tra phân quyền: Quản trị viên ADMIN có toàn quyền truy cập tất cả các trang,Đăng nhập & Phân quyền,Integration Testing,Passed,"1. Đăng nhập tài khoản admin
+2. Lần lượt click các menu: /Stores, /Users, /Categories, /Products, /Suppliers, /Customers, /Pos, /Invoices, /Inventory, /Import, /Transfers, /Promotions, /Reports","1. Login: admin
+2. Duyệt qua 13 module","1. Tất cả các trang đều mở thành công 100%, không trang nào bị AccessDenied",,High,Critical,Manual
+19,Đăng xuất tài khoản xóa hoàn toàn Cookie xác thực và chống Back trình duyệt,Đăng nhập & Phân quyền,Integration Testing,Passed,"1. Đăng nhập vào hệ thống
+2. Click menu người dùng góc phải -> Đăng xuất
+3. Nhấn nút Back trên trình duyệt để quay lại trang quản trị","1. Login: admin
+2. Bấm Đăng xuất
+3. Bấm Back trình duyệt","1. Đăng xuất thành công, xóa cookie xác thực
+2. Trình duyệt quay về trang đăng nhập và bắt buộc đăng nhập lại, không hiển thị dữ liệu nhạy cảm",,High,Major,Manual
+20,Tự động ghi nhớ ReturnUrl khi người dùng bị hết phiên làm việc,Đăng nhập & Phân quyền,Integration Testing,Passed,"1. Chưa đăng nhập, truy cập link /Products/Create
+2. Hệ thống redirect về /Account/Login?ReturnUrl=%2FProducts%2FCreate
+3. Đăng nhập tài khoản admin","1. URL: /Products/Create
+2. 
+3. Login: admin / admin123","1. Chuyển hướng về trang đăng nhập kèm ReturnUrl
+2. Sau khi đăng nhập thành công, hệ thống tự động đưa người dùng đến thẳng trang /Products/Create",,Medium,Normal,Automated
+21,Hiển thị đúng giao diện trang Đổi mật khẩu,Đổi mật khẩu & Profile cá nhân,UI,Passed,"1. Đăng nhập tài khoản
+2. Vào menu góc phải chọn 'Đổi mật khẩu'
+3. Quan sát form","1. 
+2. URL: /Account/ChangePassword
+3. ","1. Mở trang /Account/ChangePassword thành công
+2. Hiển thị form: Mật khẩu hiện tại, Mật khẩu mới, Xác nhận mật khẩu mới, Nút Cập nhật",,Medium,Normal,Manual
+22,Ẩn ký tự mật khẩu trên cả 3 ô nhập liệu của form Đổi mật khẩu,Đổi mật khẩu & Profile cá nhân,UI,Passed,"1. Nhập vào ô Mật khẩu cũ
+2. Nhập vào ô Mật khẩu mới
+3. Nhập vào ô Xác nhận mật khẩu","1. Pass1: 123456
+2. Pass2: abc@123
+3. Pass3: abc@123","1. Cả 3 ô đều hiển thị dấu chấm tròn bảo mật (*), không lộ ký tự",,Medium,Normal,Manual
+23,Hiển thị thông tin tên người dùng và vai trò trên Topbar,Đổi mật khẩu & Profile cá nhân,UI,Passed,"1. Đăng nhập tài khoản manager
+2. Quan sát góc trên bên phải thanh Topbar","1. Login: manager
+2. ","1. Avatar tròn hiển thị chữ viết tắt họ tên (QL)
+2. Hiển thị đúng họ tên 'Quản Lý Cửa Hàng' và huy hiệu vai trò 'Quản Lý Cửa Hàng'",,Medium,Minor,Manual
+24,Đổi mật khẩu thất bại khi bỏ trống ô Mật khẩu hiện tại,Đổi mật khẩu & Profile cá nhân,UI,Passed,"1. Bỏ trống Mật khẩu hiện tại
+2. Nhập mật khẩu mới và xác nhận
+3. Bấm Đổi mật khẩu","1. Mật khẩu cũ: (trống)
+2. Mật khẩu mới: NewPass@2026
+3. ","1. Báo lỗi validation: 'Vui lòng nhập mật khẩu hiện tại'
+2. Form không gửi đi",,High,Normal,Manual
+25,Đổi mật khẩu thất bại khi Mật khẩu mới và Xác nhận không khớp nhau,Đổi mật khẩu & Profile cá nhân,UI,Passed,"1. Nhập mật khẩu cũ đúng
+2. Nhập mật khẩu mới: Pass123
+3. Nhập xác nhận: Pass456
+4. Submit","1. OldPass: 123456
+2. NewPass: Pass123
+3. ConfirmPass: Pass456
+4. ","1. Báo lỗi: 'Xác nhận mật khẩu mới không khớp'
+2. Dữ liệu trong CSDL giữ nguyên",,High,Normal,Manual
+26,Đổi mật khẩu thành công khi điền thông tin hợp lệ (API),Đổi mật khẩu & Profile cá nhân,API,Passed,"1. Gửi POST /Account/ChangePassword với mật khẩu cũ đúng và mật khẩu mới hợp lệ
+2. Kiểm tra DB","1. OldPass: 123456, NewPass: NewPass@2026, ConfirmPass: NewPass@2026
+2. ","1. HTTP Status Code 302 Redirect về trang chủ
+2. Hiển thị TempData['SuccessMessage']: 'Đổi mật khẩu thành công!'
+3. Cột PASSWORD trong bảng USERS được cập nhật chuỗi mã hóa BCrypt mới",,High,Critical,Automated
+27,Đổi mật khẩu thất bại khi nhập sai Mật khẩu hiện tại (API),Đổi mật khẩu & Profile cá nhân,API,Passed,"1. Gửi POST /Account/ChangePassword với mật khẩu cũ sai
+2. Kiểm tra phản hồi","1. OldPass: sai_mat_khau, NewPass: NewPass@2026, ConfirmPass: NewPass@2026
+2. ","1. Kiểm tra BCrypt.Verify trả về false
+2. Báo lỗi: 'Mật khẩu hiện tại không chính xác'
+3. Mật khẩu trong DB không bị thay đổi",,High,Major,Automated
+28,Đổi mật khẩu thất bại khi Mật khẩu mới trùng với Mật khẩu cũ (API),Đổi mật khẩu & Profile cá nhân,API,Passed,"1. Gửi POST với Mật khẩu mới giống hệt Mật khẩu hiện tại
+2. Kiểm tra phản hồi","1. OldPass: 123456, NewPass: 123456, ConfirmPass: 123456
+2. ","1. Hệ thống kiểm tra trùng mật khẩu cũ
+2. Báo lỗi: 'Mật khẩu mới không được trùng với mật khẩu hiện tại'",,High,Normal,Automated
+29,Đổi mật khẩu thất bại khi Mật khẩu mới quá ngắn (< 6 ký tự),Đổi mật khẩu & Profile cá nhân,API,Passed,"1. Gửi POST với mật khẩu mới chỉ có 3 ký tự
+2. Kiểm tra phản hồi","1. OldPass: 123456, NewPass: 123, ConfirmPass: 123
+2. ","1. Validation bắt lỗi độ dài tối thiểu
+2. Báo lỗi: 'Mật khẩu mới phải có ít nhất 6 ký tự'",,Medium,Normal,Automated
+30,Đăng nhập lại thành công với mật khẩu mới sau khi đổi,Đổi mật khẩu & Profile cá nhân,Integration Testing,Passed,"1. Đổi mật khẩu tài khoản cashier thành NewPass@2026
+2. Đăng xuất
+3. Đăng nhập lại với mật khẩu NewPass@2026","1. Đổi MK -> NewPass@2026
+2. Logout
+3. Login: cashier / NewPass@2026","1. Đổi mật khẩu thành công
+2. Đăng xuất an toàn
+3. Đăng nhập thành công vào hệ thống với mật khẩu mới",,High,Critical,Automated
+31,Đăng nhập thất bại với mật khẩu cũ sau khi đã đổi mật khẩu,Đổi mật khẩu & Profile cá nhân,Integration Testing,Passed,"1. Đã đổi mật khẩu sang NewPass@2026
+2. Cố tình đăng nhập lại với mật khẩu cũ 123456
+3. Quan sát kết quả","1. 
+2. Login: cashier / 123456
+3. ","1. Đăng nhập bị từ chối
+2. Báo lỗi: Tên đăng nhập hoặc mật khẩu không chính xác",,High,Major,Automated
+32,Hiển thị đúng tên chi nhánh của người dùng đang đăng nhập trên thanh Header,Đổi mật khẩu & Profile cá nhân,Integration Testing,Passed,"1. Đăng nhập tài khoản cashier thuộc Chi nhánh 1
+2. Quan sát tiêu đề cửa hàng ở Topbar","1. Cashier thuộc ST001
+2. ",1. Topbar hiển thị chính xác tên chi nhánh: 'MiniMart Trụ Sở Chính' lấy từ Claim StoreId,,Medium,Normal,Manual
+33,Hiển thị ngày tháng hiện tại định dạng tiếng Việt trên Header,Đổi mật khẩu & Profile cá nhân,UI,Passed,"1. Đăng nhập vào trang chủ
+2. Quan sát dòng ngày tháng bên dưới tiêu đề trang","1. 
+2. ","1. Dòng chữ hiển thị chuẩn tiếng Việt (ví dụ: 'Chủ Nhật, 15 tháng 11, 2026')
+2. Không bị lỗi phông chữ",,Low,Trivial,Manual
+34,Chặn đổi mật khẩu khi chưa đăng nhập hệ thống,Đổi mật khẩu & Profile cá nhân,Integration Testing,Passed,"1. Chưa đăng nhập, truy cập trực tiếp /Account/ChangePassword
+2. Quan sát điều hướng","1. URL: /Account/ChangePassword
+2. ","1. Attribute [Authorize] kích hoạt
+2. Chuyển hướng người dùng về /Account/Login?ReturnUrl=%2FAccount%2FChangePassword",,High,Major,Automated
+35,Tự động hash mật khẩu bằng salt ngẫu nhiên chống Rainbow Table,Đổi mật khẩu & Profile cá nhân,API,Passed,"1. Đổi mật khẩu cho 2 tài khoản khác nhau với cùng chuỗi '123456'
+2. So sánh 2 chuỗi hash PASSWORD trong Oracle","1. User 1 đặt '123456', User 2 đặt '123456'
+2. Query SELECT PASSWORD FROM USERS","1. Cả 2 tài khoản đều đổi thành công
+2. Hai chuỗi hash trong DB hoàn toàn khác nhau do cơ chế sinh salt ngẫu nhiên của BCrypt",,High,Critical,Automated
+36,Hiển thị danh sách chi nhánh đầy đủ các cột và nút thao tác,Quản lý Chi nhánh (Stores),UI,Passed,"Vào /Stores, quan sát bảng",Dữ liệu chi nhánh,"Hiển thị Mã, Tên, Địa chỉ, SĐT, Email, Loại hình, Trạng thái và các nút Sửa, Xem",,High,Normal,Manual
+37,Mở form thêm chi nhánh mới với mã sinh tự động,Quản lý Chi nhánh (Stores),UI,Passed,Bấm 'Thêm chi nhánh mới',Dữ liệu chi nhánh,"Form mở ra, ô mã chi nhánh gợi ý mã mới ST00X",,High,Normal,Manual
+38,Thêm chi nhánh thành công với đầy đủ thông tin hợp lệ,Quản lý Chi nhánh (Stores),API,Passed,"Nhập StoreCode=ST003, Name=MiniMart Thủ Đức, Address=Võ Văn Ngân, Phone=02838112233",Dữ liệu chi nhánh,"Bản ghi lưu vào bảng STORES, redirect về Index kèm thông báo thành công",,High,Major,Automated
+39,Thêm chi nhánh thất bại khi bỏ trống Tên chi nhánh,Quản lý Chi nhánh (Stores),API,Passed,"Để trống Name, bấm Lưu",Dữ liệu chi nhánh,"ModelState kiểm tra [Required], báo lỗi: Vui lòng nhập tên chi nhánh",,High,Normal,Automated
+40,Thêm chi nhánh thất bại khi trùng StoreCode,Quản lý Chi nhánh (Stores),API,Passed,Nhập StoreCode=ST001 (đã có),Dữ liệu chi nhánh,"Bắt lỗi Unique Constraint, báo lỗi mã chi nhánh đã tồn tại",,High,Major,Automated
+41,Thêm chi nhánh thất bại khi định dạng Email không hợp lệ,Quản lý Chi nhánh (Stores),UI,Passed,Nhập Email: 'email_sai_dinh_dang',Dữ liệu chi nhánh,HTML5 validation hoặc ModelState báo email không hợp lệ,,High,Normal,Manual
+42,Thêm chi nhánh thất bại khi Số điện thoại chứa chữ cái,Quản lý Chi nhánh (Stores),UI,Passed,Nhập Phone: '028abc123',Dữ liệu chi nhánh,Báo lỗi số điện thoại chỉ được chứa số,,High,Normal,Manual
+43,Chỉnh sửa thông tin địa chỉ và số điện thoại chi nhánh,Quản lý Chi nhánh (Stores),API,Passed,"Sửa Address=789 Lê Văn Việt, Phone=02839998888",Dữ liệu chi nhánh,Dữ liệu được cập nhật trong bảng STORES,,High,Major,Automated
+44,Chuyển trạng thái chi nhánh sang Tạm ngưng (INACTIVE),Quản lý Chi nhánh (Stores),UI,Passed,"Chọn chi nhánh ST002, đổi Status = INACTIVE",Dữ liệu chi nhánh,Chi nhánh hiển thị badge màu xám 'Tạm ngưng',,High,Normal,Manual
+45,Khôi phục chi nhánh từ Tạm ngưng về Hoạt động (ACTIVE),Quản lý Chi nhánh (Stores),UI,Passed,Đổi chi nhánh INACTIVE về ACTIVE,Dữ liệu chi nhánh,Badge chuyển sang màu xanh 'Hoạt động',,High,Normal,Manual
+46,Tìm kiếm chi nhánh theo từ khóa tên hoặc mã,Quản lý Chi nhánh (Stores),Integration Testing,Passed,Nhập từ khóa 'Thủ Đức' vào ô tìm kiếm,Dữ liệu chi nhánh,Bảng chỉ hiển thị chi nhánh MiniMart Thủ Đức,,High,Normal,Manual
+47,Chi nhánh Tạm ngưng không hiển thị trong dropdown chọn chi nhánh bán hàng,Quản lý Chi nhánh (Stores),Integration Testing,Passed,"Chi nhánh ST002 bị INACTIVE, mở POS",Dữ liệu chi nhánh,Dropdown chi nhánh trên header không cho phép chọn chi nhánh đã tạm ngưng,,High,Major,Manual
+48,Phân trang danh sách chi nhánh khi có nhiều hơn 10 chi nhánh,Quản lý Chi nhánh (Stores),UI,Passed,"Tạo 15 chi nhánh, quan sát phân trang",Dữ liệu chi nhánh,"Bảng hiển thị 10 chi nhánh/trang, có nút Trước, 1, 2, Tiếp",,High,Minor,Manual
+49,Xem chi tiết thông tin chi nhánh và danh sách nhân viên trực thuộc,Quản lý Chi nhánh (Stores),Integration Testing,Passed,Bấm Xem chi tiết chi nhánh ST001,Dữ liệu chi nhánh,Hiển thị thông tin cửa hàng kèm danh sách các nhân viên đang làm việc tại chi nhánh đó,,High,Normal,Manual
+50,Tự động gán thời gian CreatedAt và UpdatedAt khi tạo chi nhánh,Quản lý Chi nhánh (Stores),API,Passed,Kiểm tra bản ghi vừa tạo trong Oracle,Dữ liệu chi nhánh,Cột CREATED_AT và UPDATED_AT tự động nhận giá trị CURRENT_TIMESTAMP,,High,Minor,Automated
+51,Hiển thị danh sách nhân viên kèm vai trò và chi nhánh công tác,Quản lý Nhân viên & Người dùng (Users),UI,Passed,Vào /Users,Dữ liệu nhân viên,"Bảng hiển thị: Họ tên, Username, Email, Vai trò (Badge màu riêng), Chi nhánh, Trạng thái",,High,Normal,Manual
+52,"Lọc nhân viên theo vai trò (Admin, Quản lý, Thu ngân, Kho)",Quản lý Nhân viên & Người dùng (Users),UI,Passed,Chọn filter Vai trò: CASHIER,Dữ liệu nhân viên,Bảng chỉ hiển thị các tài khoản có vai trò Thu ngân,,High,Normal,Manual
+53,Lọc nhân viên theo chi nhánh cửa hàng,Quản lý Nhân viên & Người dùng (Users),UI,Passed,Chọn filter Chi nhánh: MiniMart Trụ Sở Chính,Dữ liệu nhân viên,Bảng chỉ hiển thị nhân viên thuộc chi nhánh đã chọn,,High,Normal,Manual
+54,Tìm kiếm nhân viên theo email hoặc số điện thoại,Quản lý Nhân viên & Người dùng (Users),UI,Passed,Nhập email 'cashier@minimart.vn',Dữ liệu nhân viên,Hiển thị đúng tài khoản thu ngân khớp email,,High,Normal,Manual
+55,Mở form thêm nhân viên mới với danh sách chi nhánh nạp từ DB,Quản lý Nhân viên & Người dùng (Users),UI,Passed,Bấm 'Thêm nhân viên mới',Dữ liệu nhân viên,"Form mở ra, dropdown Chi nhánh chứa danh sách chi nhánh ACTIVE",,High,Normal,Manual
+56,Thêm nhân viên vai trò Thu ngân (CASHIER) thành công,Quản lý Nhân viên & Người dùng (Users),API,Passed,"Nhập username=cashier2, pass=123456, role=CASHIER, storeId=1",Dữ liệu nhân viên,"Tạo tài khoản thành công, mật khẩu mã hóa BCrypt",,High,Critical,Automated
+57,Thêm nhân viên vai trò Thủ kho (WAREHOUSE_STAFF) thành công,Quản lý Nhân viên & Người dùng (Users),API,Passed,"Nhập username=kho2, pass=123456, role=WAREHOUSE_STAFF, storeId=1",Dữ liệu nhân viên,Tạo tài khoản thủ kho thành công,,High,Critical,Automated
+58,Thêm nhân viên thất bại khi username bị trùng lặp,Quản lý Nhân viên & Người dùng (Users),API,Passed,Nhập username=admin đã có,Dữ liệu nhân viên,Hệ thống báo lỗi trùng lặp tên đăng nhập,,High,Major,Automated
+59,Thêm nhân viên thất bại khi email bị trùng lặp,Quản lý Nhân viên & Người dùng (Users),API,Passed,Nhập email=admin@minimart.vn đã có,Dữ liệu nhân viên,Báo lỗi email này đã được sử dụng,,High,Major,Automated
+60,Thêm nhân viên thất bại khi bỏ trống các trường bắt buộc,Quản lý Nhân viên & Người dùng (Users),UI,Passed,"Để trống họ tên và mật khẩu, submit",Dữ liệu nhân viên,Validation hiển thị lỗi yêu cầu nhập đầy đủ,,High,Normal,Manual
+61,Chỉnh sửa họ tên và email của nhân viên,Quản lý Nhân viên & Người dùng (Users),API,Passed,"Sửa FullName='Nguyễn Thu Ngân Mới', Email='new@minimart.vn'",Dữ liệu nhân viên,Cập nhật thành công trong Oracle,,High,Normal,Automated
+62,Chuyển công tác nhân viên sang chi nhánh khác,Quản lý Nhân viên & Người dùng (Users),Integration Testing,Passed,Đổi StoreId từ 1 sang 2,Dữ liệu nhân viên,Nhân viên đăng nhập sẽ tự động gắn với chi nhánh mới,,High,Major,Manual
+63,Khóa tài khoản nhân viên (Status = INACTIVE),Quản lý Nhân viên & Người dùng (Users),Integration Testing,Passed,Đổi trạng thái nhân viên thành INACTIVE,Dữ liệu nhân viên,Nhân viên bị đăng xuất và không thể đăng nhập lại,,High,Critical,Manual
+64,Mở khóa tài khoản nhân viên (Status = ACTIVE),Quản lý Nhân viên & Người dùng (Users),Integration Testing,Passed,Chuyển INACTIVE về ACTIVE,Dữ liệu nhân viên,Nhân viên đăng nhập lại bình thường,,High,Normal,Manual
+65,Đặt lại mật khẩu cho nhân viên (Reset Password),Quản lý Nhân viên & Người dùng (Users),API,Passed,Quản trị viên chọn Reset mật khẩu về '123456',Dữ liệu nhân viên,"Mật khẩu được mã hóa lại bằng BCrypt, nhân viên đăng nhập với pass mặc định",,High,Major,Automated
+66,Chặn người dùng tự xóa tài khoản của chính mình,Quản lý Nhân viên & Người dùng (Users),Integration Testing,Passed,Admin đang đăng nhập cố tình xóa tài khoản admin,Dữ liệu nhân viên,Hệ thống chặn: Không thể xóa tài khoản đang đăng nhập,,High,Major,Manual
+67,Chặn xóa tài khoản nhân viên đã phát sinh hóa đơn bán hàng,Quản lý Nhân viên & Người dùng (Users),Integration Testing,Passed,Cố tình xóa thu ngân đã lập 10 hóa đơn,Dữ liệu nhân viên,"Bắt lỗi khóa ngoại FK_INVOICE_CASHIER, chuyển sang gợi ý Khóa tài khoản thay thế",,High,Major,Manual
+68,Hiển thị avatar ký tự viết tắt họ tên cho nhân viên,Quản lý Nhân viên & Người dùng (Users),UI,Passed,Nhân viên tên 'Trần Văn Bình',Dữ liệu nhân viên,Avatar hiển thị vòng tròn màu với 2 chữ cái 'TB',,High,Minor,Manual
+69,Xác thực token chống giả mạo Antiforgery khi submit form nhân viên,Quản lý Nhân viên & Người dùng (Users),API,Passed,Gửi POST /Users/Create không kèm RequestVerificationToken,Dữ liệu nhân viên,Hệ thống trả về HTTP 400 Bad Request chống tấn công CSRF,,High,Critical,Automated
+70,Kiểm tra toàn vẹn phân quyền Admin độc quyền quản lý nhân sự,Quản lý Nhân viên & Người dùng (Users),Integration Testing,Passed,Đăng nhập Manager cố truy cập /Users,Dữ liệu nhân viên,Bị chặn điều hướng về AccessDenied,,High,Critical,Manual
+71,Hiển thị danh sách danh mục phân cấp với số lượng sản phẩm,Quản lý Danh mục hàng hóa (Categories),UI,Passed,Vào /Categories,Dữ liệu danh mục,"Danh sách hiển thị tên danh mục, mô tả, cấp độ và số sản phẩm trực thuộc",,High,Normal,Manual
+72,Thêm mới danh mục hàng hóa hợp lệ,Quản lý Danh mục hàng hóa (Categories),API,Passed,"Name='Đồ gia dụng tiện ích', Description='Chổi, khăn lau'",Dữ liệu danh mục,"Bản ghi được tạo trong CATEGORIES, hiển thị ngay trên bảng",,High,Major,Automated
+73,Thêm danh mục thất bại khi để trống Tên,Quản lý Danh mục hàng hóa (Categories),API,Passed,"Name='', bấm Thêm",Dữ liệu danh mục,Validation báo lỗi tên danh mục bắt buộc,,High,Normal,Automated
+74,Chỉnh sửa tên và mô tả danh mục hàng hóa,Quản lý Danh mục hàng hóa (Categories),API,Passed,Sửa Name='Bánh kẹo & Snack cao cấp',Dữ liệu danh mục,Dữ liệu cập nhật thành công trong Oracle,,High,Normal,Automated
+75,Tạm ngưng hoạt động danh mục (Status = INACTIVE),Quản lý Danh mục hàng hóa (Categories),UI,Passed,Đổi trạng thái danh mục sang Tạm ngưng,Dữ liệu danh mục,Badge hiển thị Inactive,,High,Normal,Manual
+76,Danh mục Tạm ngưng không hiển thị trên thanh tabs danh mục POS,Quản lý Danh mục hàng hóa (Categories),Integration Testing,Passed,"Tạm ngưng danh mục Bánh kẹo, mở POS",Dữ liệu danh mục,Thanh tabs ngang trên POS ẩn danh mục này,,High,Major,Manual
+77,Tạo danh mục con cấp 2 trực thuộc danh mục cha cấp 1,Quản lý Danh mục hàng hóa (Categories),Integration Testing,Passed,Tạo 'Nước ngọt có ga' có ParentId trỏ về 'Nước giải khát',Dữ liệu danh mục,Bảng CATEGORIES lưu đúng quan hệ phân cấp ParentId,,High,Normal,Manual
+78,Xóa danh mục rỗng chưa có sản phẩm nào,Quản lý Danh mục hàng hóa (Categories),API,Passed,Xóa danh mục vừa tạo chưa có sản phẩm,Dữ liệu danh mục,Xóa thành công khỏi bảng CATEGORIES,,High,Normal,Automated
+79,Chặn xóa danh mục đang chứa sản phẩm,Quản lý Danh mục hàng hóa (Categories),Integration Testing,Passed,Cố tình xóa danh mục 'Nước giải khát' (đang có Coca),Dữ liệu danh mục,"Hệ thống chặn xóa và báo: Danh mục đang có sản phẩm, không thể xóa",,High,Major,Manual
+80,Tìm kiếm danh mục theo từ khóa,Quản lý Danh mục hàng hóa (Categories),UI,Passed,Nhập từ khóa 'Gia vị',Dữ liệu danh mục,Chỉ hiển thị danh mục Gia vị thực phẩm,,High,Minor,Manual
+81,Hiển thị modal thêm nhanh danh mục không cần chuyển trang,Quản lý Danh mục hàng hóa (Categories),UI,Passed,Click nút Thêm danh mục,Dữ liệu danh mục,"Modal popup mở ra mượt mà, submit bằng AJAX",,High,Normal,Manual
+82,Tự động cập nhật thời gian UpdatedAt khi sửa danh mục,Quản lý Danh mục hàng hóa (Categories),API,Passed,"Sửa mô tả danh mục, kiểm tra DB",Dữ liệu danh mục,Cột UPDATED_AT cập nhật timestamp mới,,High,Minor,Automated
+83,Hỗ trợ tiếng Việt có dấu đầy đủ trong tên và mô tả danh mục,Quản lý Danh mục hàng hóa (Categories),UI,Passed,Nhập tên chứa ký tự tiếng Việt Unicode phức tạp,Dữ liệu danh mục,"Hiển thị chuẩn xác, không bị lỗi font hay biến thành dấu hỏi (?)",,High,Normal,Manual
+84,Hiển thị tổng số lượng danh mục hoạt động trên thẻ thống kê,Quản lý Danh mục hàng hóa (Categories),UI,Passed,Quan sát card tổng quan danh mục,Dữ liệu danh mục,Hiển thị đúng số lượng danh mục ACTIVE,,High,Minor,Manual
+85,Kiểm tra chỉ Quản lý và Admin mới được chỉnh sửa danh mục,Quản lý Danh mục hàng hóa (Categories),Integration Testing,Passed,Thu ngân cố gửi POST sửa danh mục,Dữ liệu danh mục,Bị chặn bởi phân quyền Role Authorization,,High,Major,Manual
+86,Hiển thị danh sách nhà cung cấp đầy đủ thông tin pháp lý,Quản lý Nhà cung cấp (Suppliers),UI,Passed,Vào /Suppliers,Dữ liệu NCC,"Bảng hiển thị Tên NCC, Mã NCC, Mã số thuế, SĐT, Email, Người liên hệ, Địa chỉ",,High,Normal,Manual
+87,Tìm kiếm nhà cung cấp theo mã số thuế doanh nghiệp,Quản lý Nhà cung cấp (Suppliers),UI,Passed,Nhập MST: 0312345678,Dữ liệu NCC,Lọc chính xác công ty Á Châu có MST trên,,High,Normal,Manual
+88,Tìm kiếm nhà cung cấp theo tên người đại diện liên hệ,Quản lý Nhà cung cấp (Suppliers),UI,Passed,Nhập 'Nguyễn Văn Hưng',Dữ liệu NCC,Trả về đúng nhà cung cấp có người liên hệ khớp,,High,Normal,Manual
+89,Thêm nhà cung cấp mới thành công,Quản lý Nhà cung cấp (Suppliers),API,Passed,"Code=NCC003, Name=Công ty Sữa Vinamilk, MST=0300588569, Phone=02854155555",Dữ liệu NCC,Bản ghi được lưu vào bảng SUPPLIERS trong Oracle,,High,Major,Automated
+90,Thêm nhà cung cấp thất bại khi thiếu Mã nhà cung cấp,Quản lý Nhà cung cấp (Suppliers),API,Passed,Để trống SupplierCode,Dữ liệu NCC,Validation báo lỗi yêu cầu mã nhà cung cấp,,High,Normal,Automated
+91,Thêm nhà cung cấp thất bại khi trùng SupplierCode,Quản lý Nhà cung cấp (Suppliers),API,Passed,Nhập SupplierCode=NCC001 đã có,Dữ liệu NCC,Báo lỗi trùng mã nhà cung cấp duy nhất,,High,Major,Automated
+92,Thêm nhà cung cấp thất bại khi Mã số thuế không đúng định dạng,Quản lý Nhà cung cấp (Suppliers),UI,Passed,Nhập MST chỉ có 5 số hoặc chứa chữ cái,Dữ liệu NCC,Báo lỗi mã số thuế doanh nghiệp không hợp lệ,,High,Normal,Manual
+93,Thêm nhà cung cấp thất bại khi Email sai định dạng,Quản lý Nhà cung cấp (Suppliers),UI,Passed,Nhập Email: 'ncc@',Dữ liệu NCC,Validation báo lỗi email không đúng định dạng,,High,Normal,Manual
+94,Chỉnh sửa thông tin liên hệ nhà cung cấp,Quản lý Nhà cung cấp (Suppliers),API,Passed,"Sửa ContactPerson='Trần Thị Lan', Phone='0988776655'",Dữ liệu NCC,Dữ liệu được cập nhật trong bảng SUPPLIERS,,High,Normal,Automated
+95,Tạm ngưng giao dịch với nhà cung cấp (Status = INACTIVE),Quản lý Nhà cung cấp (Suppliers),UI,Passed,Đổi trạng thái NCC sang Inactive,Dữ liệu NCC,Badge trạng thái đổi màu xám,,High,Normal,Manual
+96,Nhà cung cấp Inactive không xuất hiện trong tạo phiếu nhập kho,Quản lý Nhà cung cấp (Suppliers),Integration Testing,Passed,"NCC001 bị Inactive, vào /Import/Create",Dữ liệu NCC,Dropdown chọn NCC trong phiếu nhập không hiển thị NCC này,,High,Major,Manual
+97,Xem danh sách các mặt hàng do nhà cung cấp cung ứng,Quản lý Nhà cung cấp (Suppliers),Integration Testing,Passed,"Vào chi tiết NCC, quan sát bảng sản phẩm",Dữ liệu NCC,Liệt kê đầy đủ các sản phẩm có SupplierId trỏ về NCC này,,High,Normal,Manual
+98,Chặn xóa nhà cung cấp đã có lịch sử nhập kho,Quản lý Nhà cung cấp (Suppliers),Integration Testing,Passed,Cố tình xóa NCC đã có phiếu nhập trong IMPORT_RECEIPTS,Dữ liệu NCC,Hệ thống chặn vì vi phạm khóa ngoại toàn vẹn dữ liệu,,High,Major,Manual
+99,Tự động sinh mã nhà cung cấp theo quy tắc NCC+Ticks,Quản lý Nhà cung cấp (Suppliers),UI,Passed,Bấm 'Thêm nhà cung cấp',Dữ liệu NCC,Ô mã NCC tự động điền sẵn mã gợi ý duy nhất,,High,Minor,Manual
+100,Xuất danh sách nhà cung cấp ra file Excel,Quản lý Nhà cung cấp (Suppliers),Integration Testing,Passed,Bấm Xuất dữ liệu tại trang NCC,Dữ liệu NCC,File dữ liệu tải về với đầy đủ thông tin liên hệ và MST,,High,Minor,Manual
+101,Hỗ trợ lưu địa chỉ trụ sở dài tối đa 500 ký tự,Quản lý Nhà cung cấp (Suppliers),API,Passed,"Nhập địa chỉ chi tiết số nhà, ngõ, phường, quận, tỉnh",Dữ liệu NCC,"Dữ liệu lưu trọn vẹn, không bị cắt bớt",,High,Normal,Automated
+102,Chặn người dùng vai trò Thu ngân truy cập quản lý nhà cung cấp,Quản lý Nhà cung cấp (Suppliers),Integration Testing,Passed,Cashier truy cập /Suppliers,Dữ liệu NCC,Bị chặn và chuyển hướng AccessDenied,,High,Major,Manual
+103,Kiểm tra toàn vẹn liên kết giữa NCC và Sản phẩm trong Oracle,Quản lý Nhà cung cấp (Suppliers),Integration Testing,Passed,Kiểm tra ràng buộc FK_PROD_SUPPLIER,Dữ liệu NCC,Oracle thực thi toàn vẹn khóa ngoại giữa PRODUCTS và SUPPLIERS,,High,Normal,Manual
+104,"Hiển thị danh sách sản phẩm với hình ảnh, barcode và đơn vị tính",Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Vào /Products,Dữ liệu sản phẩm,"Bảng sản phẩm hiển thị: Ảnh/Icon, Tên SP, Mã SP, Barcode, Danh mục, ĐVT, Giá bán, Trạng thái",,High,Normal,Manual
+105,Lọc danh mục sản phẩm kết hợp tìm kiếm từ khóa,Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,"Chọn Danh mục: Bánh kẹo, Tìm kiếm: 'Chocopie'",Dữ liệu sản phẩm,Lọc chính xác sản phẩm Bánh Chocopie,,High,Normal,Manual
+106,Phân trang danh sách sản phẩm khi dữ liệu lớn,Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,"Hệ thống có 50 sản phẩm, xem trang 1, trang 2",Dữ liệu sản phẩm,Phân trang hiển thị chính xác số trang và số lượng sản phẩm mỗi trang,,High,Minor,Manual
+107,Mở form thêm sản phẩm mới với các trường bắt buộc,Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Bấm 'Thêm sản phẩm mới',Dữ liệu sản phẩm,Form hiển thị các trường có dấu sao đỏ bắt buộc,,High,Normal,Manual
+108,"Thêm sản phẩm mới thành công với đầy đủ mã, barcode và giá bán",Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,"Code=SP008, Name=Kẹo dẻo Chupa Chups, Barcode=8934567890130, Unit=Gói, Price=8000",Dữ liệu sản phẩm,Bản ghi lưu vào PRODUCTS và tự tạo bản ghi tương ứng trong STORE_PRODUCTS,,High,Critical,Automated
+109,Thêm sản phẩm thất bại khi bỏ trống Tên sản phẩm,Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,"Name='', bấm Lưu",Dữ liệu sản phẩm,Báo lỗi: Vui lòng nhập tên sản phẩm,,High,Normal,Automated
+110,Thêm sản phẩm thất bại khi bỏ trống Mã sản phẩm,Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,"ProductCode='', bấm Lưu",Dữ liệu sản phẩm,Báo lỗi: Vui lòng nhập mã sản phẩm,,High,Normal,Automated
+111,Thêm sản phẩm thất bại khi trùng ProductCode,Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,Nhập ProductCode=SP001,Dữ liệu sản phẩm,Báo lỗi trùng mã sản phẩm,,High,Major,Automated
+112,Thêm sản phẩm thất bại khi trùng Barcode,Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,Nhập Barcode=8934567890123,Dữ liệu sản phẩm,Báo lỗi mã vạch đã được đăng ký cho sản phẩm khác,,High,Major,Automated
+113,Thêm sản phẩm thất bại khi Đơn giá bán là số âm (< 0),Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Nhập DefaultPrice = -10000,Dữ liệu sản phẩm,Validation chặn số âm: Giá bán không được nhỏ hơn 0,,High,Normal,Manual
+114,Thêm sản phẩm với giá bán bằng 0 (Hàng khuyến mãi tặng kèm),Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,Nhập DefaultPrice = 0,Dữ liệu sản phẩm,Hệ thống chấp nhận giá bán 0đ cho mặt hàng quà tặng,,High,Minor,Automated
+115,"Chỉnh sửa thông tin tên, đơn vị tính và mô tả sản phẩm",Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,Sửa Name='Bánh Chocopie Hộp 12 Cái Đậm Vị',Dữ liệu sản phẩm,Dữ liệu được cập nhật trong bảng PRODUCTS,,High,Normal,Automated
+116,Thay đổi giá bán sản phẩm và tự động ghi log vào PRICE_HISTORY,Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,Sửa giá SP001 từ 55.000đ lên 58.000đ,Dữ liệu sản phẩm,"Giá mới cập nhật trong STORE_PRODUCTS, 1 bản ghi mới tạo trong PRICE_HISTORY",,High,Major,Manual
+117,Đổi danh mục cho sản phẩm,Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,Đổi CategoryId của SP003 sang danh mục khác,Dữ liệu sản phẩm,Cập nhật khóa ngoại CategoryId thành công,,High,Normal,Automated
+118,Tạm ngưng kinh doanh sản phẩm (INACTIVE),Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Bấm tắt trạng thái sản phẩm SP002,Dữ liệu sản phẩm,Badge chuyển sang Inactive,,High,Normal,Manual
+119,Khôi phục sản phẩm tạm ngưng về hoạt động (ACTIVE),Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Bấm bật lại sản phẩm,Dữ liệu sản phẩm,Badge chuyển sang màu xanh Active,,High,Normal,Manual
+120,Sản phẩm Inactive bị ẩn khỏi danh mục trên màn hình POS,Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,"SP002 bị Inactive, vào /Pos",Dữ liệu sản phẩm,Lưới sản phẩm POS không hiển thị SP002,,High,Critical,Manual
+121,Sản phẩm Inactive không thể thêm vào giỏ hàng khi quét barcode trên POS,Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,Quét mã vạch của sản phẩm Inactive tại quầy POS,Dữ liệu sản phẩm,Hệ thống báo: Sản phẩm này đang tạm ngưng kinh doanh,,High,Critical,Manual
+122,Thuộc tính LastImportPrice được đánh dấu [NotMapped] không sinh lỗi ORA-00904,Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,Query SELECT tất cả sản phẩm,Dữ liệu sản phẩm,"EF Core không truy vấn cột LAST_IMPORT_PRICE, triệt tiêu lỗi ORA-00904",,High,Critical,Manual
+123,Hỗ trợ cập nhật URL ảnh sản phẩm hiển thị trên card,Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Nhập ImageUrl='/images/chocopie.png',Dữ liệu sản phẩm,Thẻ sản phẩm hiển thị ảnh minh họa chuẩn kích thước,,High,Minor,Manual
+124,"Hiển thị đơn vị tính (Gói, Lon, Chai, Hộp, Cái) chuẩn xác",Quản lý Hàng hóa & Sản phẩm (Products),UI,Passed,Quan sát cột ĐVT,Dữ liệu sản phẩm,Đơn vị tính hiển thị dạng badge xám thanh lịch,,High,Minor,Manual
+125,Kiểm tra sản phẩm liên kết đúng Nhà cung cấp,Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,Vào chi tiết sản phẩm SP001,Dữ liệu sản phẩm,Hiển thị đúng tên nhà cung cấp Á Châu,,High,Normal,Manual
+126,Xóa sản phẩm thành công khi chưa phát sinh giao dịch,Quản lý Hàng hóa & Sản phẩm (Products),API,Passed,Tạo sản phẩm test rồi bấm xóa,Dữ liệu sản phẩm,Bản ghi bị xóa hoàn toàn khỏi DB,,High,Normal,Automated
+127,Chặn xóa sản phẩm đã có lịch sử bán hàng hoặc nhập kho,Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,Cố tình xóa SP001 đã có hóa đơn,Dữ liệu sản phẩm,"Bắt lỗi khóa ngoại FK_II_PRODUCT, bảo toàn lịch sử bán hàng",,High,Major,Manual
+128,"Tìm kiếm sản phẩm hỗ trợ không phân biệt chữ hoa, chữ thường",Quản lý Hàng hóa & Sản phẩm (Products),Integration Testing,Passed,Nhập 'coca' hoặc 'COCA' hoặc 'Coca',Dữ liệu sản phẩm,Cả 3 cách gõ đều trả về kết quả sản phẩm Coca Cola như nhau,,High,Normal,Manual
+129,Hiển thị danh sách khách hàng kèm hạng thẻ và điểm thưởng,Quản lý Khách hàng & Thành viên (Customers),UI,Passed,Vào /Customers,Dữ liệu khách hàng,"Hiển thị Mã thành viên, Họ tên, SĐT, Email, Điểm hiện tại, Điểm tích lũy, Hạng thẻ (Badge màu riêng)",,High,Normal,Manual
+130,"Phân loại màu sắc thẻ thành viên (MEMBER, SILVER, GOLD, DIAMOND)",Quản lý Khách hàng & Thành viên (Customers),UI,Passed,Quan sát cột Hạng thành viên,Dữ liệu khách hàng,"MEMBER: Xám, SILVER: Bạc, GOLD: Vàng, DIAMOND: Xanh dương nổi bật",,High,Minor,Manual
+131,Tìm kiếm khách hàng theo số điện thoại chính xác,Quản lý Khách hàng & Thành viên (Customers),UI,Passed,Nhập SĐT: 0987654321,Dữ liệu khách hàng,Trả về đúng khách hàng Nguyễn Văn A,,High,Normal,Manual
+132,Tìm kiếm khách hàng theo mã thành viên (KH0001),Quản lý Khách hàng & Thành viên (Customers),UI,Passed,Nhập mã KH0001,Dữ liệu khách hàng,Trả về đúng khách hàng,,High,Normal,Manual
+133,Thêm khách hàng mới thành công với số điện thoại hợp lệ,Quản lý Khách hàng & Thành viên (Customers),API,Passed,"Name=Lê Văn Tám, Phone=0933445566, Email=tam@gmail.com",Dữ liệu khách hàng,"Lưu vào bảng CUSTOMERS, cấp mã KH0003, khởi tạo điểm = 0",,High,Major,Automated
+134,Thêm khách hàng thất bại khi bỏ trống Số điện thoại,Quản lý Khách hàng & Thành viên (Customers),API,Passed,"Phone='', bấm Lưu",Dữ liệu khách hàng,Báo lỗi: Vui lòng nhập số điện thoại,,High,Normal,Automated
+135,Thêm khách hàng thất bại khi Số điện thoại bị trùng lặp,Quản lý Khách hàng & Thành viên (Customers),API,Passed,Nhập Phone=0987654321 đã có,Dữ liệu khách hàng,Báo lỗi số điện thoại đã được đăng ký,,High,Major,Automated
+136,Thêm khách hàng thất bại khi Số điện thoại không đủ 10 chữ số,Quản lý Khách hàng & Thành viên (Customers),UI,Passed,Nhập SĐT: '09876',Dữ liệu khách hàng,Báo lỗi số điện thoại phải có 10 chữ số,,High,Normal,Manual
+137,Thêm khách hàng thất bại khi Email sai định dạng,Quản lý Khách hàng & Thành viên (Customers),UI,Passed,Nhập Email: 'khachhang@',Dữ liệu khách hàng,Báo lỗi email không hợp lệ,,High,Normal,Manual
+138,"Chỉnh sửa thông tin họ tên, email và địa chỉ khách hàng",Quản lý Khách hàng & Thành viên (Customers),API,Passed,"Sửa Address='Quận 3, TP.HCM'",Dữ liệu khách hàng,Cập nhật thành công trong CSDL,,High,Normal,Automated
+139,Tự động thăng hạng SILVER khi tích lũy đạt 1.000 điểm,Quản lý Khách hàng & Thành viên (Customers),Integration Testing,Passed,Cộng điểm đưa tích lũy lên 1050,Dữ liệu khách hàng,Hạng thành viên tự đổi từ MEMBER sang SILVER,,High,Major,Manual
+140,Tự động thăng hạng GOLD khi tích lũy đạt 3.000 điểm,Quản lý Khách hàng & Thành viên (Customers),Integration Testing,Passed,Tích lũy đạt 3100 điểm,Dữ liệu khách hàng,Hạng thành viên tự đổi sang GOLD,,High,Major,Manual
+141,Tự động thăng hạng DIAMOND khi tích lũy đạt 5.000 điểm,Quản lý Khách hàng & Thành viên (Customers),Integration Testing,Passed,Tích lũy đạt 5200 điểm,Dữ liệu khách hàng,Hạng thành viên tự đổi sang DIAMOND,,High,Major,Manual
+142,API tra cứu khách hàng theo SĐT trên màn hình POS,Quản lý Khách hàng & Thành viên (Customers),API,Passed,Gọi GET /Pos/GetCustomerByPhone?phone=0987654321,Dữ liệu khách hàng,"HTTP 200 trả về JSON họ tên, điểm và hạng thành viên",,High,Critical,Automated
+143,API tra cứu khách hàng trả về thông báo lỗi khi SĐT không tồn tại,Quản lý Khách hàng & Thành viên (Customers),API,Passed,Gọi API với SĐT '0999999999',Dữ liệu khách hàng,"Trả về { success: false, message: 'Không tìm thấy khách hàng' }",,High,Normal,Automated
+144,Cập nhật ngày giao dịch gần nhất (LastTransactionDate) khi khách mua hàng,Quản lý Khách hàng & Thành viên (Customers),Integration Testing,Passed,Khách hoàn tất thanh toán hóa đơn,Dữ liệu khách hàng,Cột LAST_TRANSACTION_DATE cập nhật thời gian hiện tại,,High,Normal,Manual
+145,Chặn xóa khách hàng đã có lịch sử hóa đơn trong hệ thống,Quản lý Khách hàng & Thành viên (Customers),Integration Testing,Passed,Cố tình xóa KH0001,Dữ liệu khách hàng,Bắt lỗi ràng buộc khóa ngoại FK_INVOICE_CUSTOMER,,High,Major,Manual
+146,Xuất danh sách khách hàng thành viên ra file Excel,Quản lý Khách hàng & Thành viên (Customers),Integration Testing,Passed,Bấm xuất dữ liệu khách hàng,Dữ liệu khách hàng,File tải về đầy đủ thông tin điểm và phân hạng,,High,Minor,Manual
+147,"Giao diện POS hiển thị 2 cột hiện đại, không bị che khuất màn hình",Bán hàng tại quầy POS (Terminal),UI,Passed,Mở /Pos,Dữ liệu giỏ hàng POS,Cột trái: catalog & barcode search; Cột phải: giỏ hàng & thanh toán vừa vặn màn hình,,High,Normal,Manual
+148,Phím tắt F2 tự động focus vào ô quét mã vạch,Bán hàng tại quầy POS (Terminal),UI,Passed,Nhấn phím F2 từ bất kỳ vị trí,Dữ liệu giỏ hàng POS,Con trỏ tự động nhảy vào ô Barcode và bôi đen nội dung,,High,Minor,Manual
+149,Phím tắt F9 tự động kích hoạt tiến trình thanh toán,Bán hàng tại quầy POS (Terminal),UI,Passed,Nhấn phím F9 khi giỏ hàng có món,Dữ liệu giỏ hàng POS,Hệ thống tự động kích hoạt nút THANH TOÁN,,High,Minor,Manual
+150,Quét mã vạch chính xác tự động thêm sản phẩm vào giỏ hàng,Bán hàng tại quầy POS (Terminal),UI,Passed,Quét mã 8934567890123 rồi nhấn Enter,Dữ liệu giỏ hàng POS,Sản phẩm Bánh Chocopie được thêm vào giỏ hàng với SL=1,,High,Critical,Manual
+151,Phát âm thanh bíp (Web Audio API) khi quét mã thành công,Bán hàng tại quầy POS (Terminal),UI,Passed,Quét mã vạch,Dữ liệu giỏ hàng POS,"Loa phát tiếng bíp chuẩn siêu thị (1750Hz, 0.08s)",,High,Normal,Manual
+152,Quét mã không tồn tại tự động kích hoạt tìm kiếm theo từ khóa,Bán hàng tại quầy POS (Terminal),UI,Passed,Gõ 'choc' rồi Enter,Dữ liệu giỏ hàng POS,Lưới sản phẩm tự động lọc ra các mặt hàng có tên chứa 'choc',,High,Normal,Manual
+153,Click vào card sản phẩm trên lưới để thêm vào giỏ hàng,Bán hàng tại quầy POS (Terminal),UI,Passed,Click chuột vào card Coca Cola,Dữ liệu giỏ hàng POS,Coca Cola được thêm vào giỏ hàng ngay lập tức,,High,Normal,Manual
+154,Sản phẩm hết hàng (Stock = 0) bị mờ và không thể click thêm,Bán hàng tại quầy POS (Terminal),UI,Passed,Quan sát sản phẩm có badge Hết hàng,Dữ liệu giỏ hàng POS,"Card có class out-of-stock, con trỏ not-allowed, click không có tác dụng",,High,Major,Manual
+155,Tăng số lượng sản phẩm bằng nút (+) trong giỏ hàng,Bán hàng tại quầy POS (Terminal),UI,Passed,Click nút (+) trên dòng Chocopie,Dữ liệu giỏ hàng POS,"Số lượng tăng lên 2, tạm tính nhân đôi",,High,Normal,Manual
+156,Giảm số lượng sản phẩm bằng nút (-) trong giỏ hàng,Bán hàng tại quầy POS (Terminal),UI,Passed,Click nút (-) khi số lượng = 2,Dữ liệu giỏ hàng POS,"Số lượng giảm về 1, tạm tính giảm tương ứng",,High,Normal,Manual
+157,Giảm số lượng về 0 tự động xóa sản phẩm khỏi giỏ hàng,Bán hàng tại quầy POS (Terminal),UI,Passed,Click nút (-) khi số lượng = 1,Dữ liệu giỏ hàng POS,Dòng sản phẩm biến mất khỏi giỏ hàng,,High,Normal,Manual
+158,Xóa trực tiếp sản phẩm bằng nút 'Xóa' trên từng dòng,Bán hàng tại quầy POS (Terminal),UI,Passed,Click nút Xóa màu đỏ,Dữ liệu giỏ hàng POS,Món hàng được gỡ khỏi giỏ hàng tức thì,,High,Normal,Manual
+159,Xóa toàn bộ giỏ hàng bằng nút 'Xóa giỏ',Bán hàng tại quầy POS (Terminal),UI,Passed,Click 'Xóa giỏ' và bấm Xác nhận,Dữ liệu giỏ hàng POS,"Giỏ hàng được làm trống hoàn toàn, tổng tiền về 0đ",,High,Normal,Manual
+160,Cảnh báo không cho phép thêm số lượng vượt tồn kho chi nhánh,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Tồn kho = 5, cố tình tăng SL = 6",Dữ liệu giỏ hàng POS,"Bật cảnh báo: 'Chỉ còn 5 Cái trong kho', số lượng giữ ở mức 5",,High,Critical,Manual
+161,"Chuyển đổi giữa Đơn 1, Đơn 2, Đơn 3 (Treo đơn đa phiên)",Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Đơn 1 có 2 món, click 'Đơn 2', thêm 1 món, click lại 'Đơn 1'",Dữ liệu giỏ hàng POS,"Dữ liệu cả 2 đơn được lưu riêng biệt 100%, không bị mất hay đè lên nhau",,High,Critical,Manual
+162,Badge số lượng trên từng nút Đơn cập nhật chính xác,Bán hàng tại quầy POS (Terminal),UI,Passed,"Thêm 3 món vào Đơn 1, thêm 5 món vào Đơn 2",Dữ liệu giỏ hàng POS,"Nút Đơn 1 hiển thị badge (3), nút Đơn 2 hiển thị badge (5)",,High,Minor,Manual
+163,Tra cứu khách hàng tích điểm bằng số điện thoại,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Nhập SĐT 0987654321, bấm Tìm",Dữ liệu giỏ hàng POS,"Hiển thị khung thông tin: Tên khách, Badge hạng, Điểm khả dụng",,High,Major,Manual
+164,Âm thanh bíp phát ra khi tìm thấy khách hàng thành viên,Bán hàng tại quầy POS (Terminal),UI,Passed,Tìm khách thành công,Dữ liệu giỏ hàng POS,Phát âm thanh bíp tần số 2400Hz báo hiệu thành công,,High,Minor,Manual
+165,Bật công tắc 'Dùng điểm' tự động tính tiền giảm trừ,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Khách có 50 điểm, đơn 100k, bật Dùng điểm",Dữ liệu giỏ hàng POS,"Tổng đơn giảm đi 50.000đ, hiển thị dòng '-50.000đ (50 điểm)'",,High,Major,Manual
+166,Giới hạn số điểm tiêu không vượt quá tổng giá trị đơn hàng,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Khách có 200 điểm (200k), đơn hàng chỉ 80k",Dữ liệu giỏ hàng POS,"Hệ thống chỉ cho tiêu tối đa 80 điểm (80k), tổng thanh toán = 0đ",,High,Major,Manual
+167,Chọn phương thức thanh toán Tiền mặt (CASH),Bán hàng tại quầy POS (Terminal),UI,Passed,Click radio Tiền mặt,Dữ liệu giỏ hàng POS,"Khung nhập tiền khách đưa hiển thị, khung VietQR ẩn",,High,Normal,Manual
+168,Nhập tiền khách đưa tự động tính tiền thối lại màu xanh,Bán hàng tại quầy POS (Terminal),UI,Passed,"Đơn 75k, nhập khách đưa 100k",Dữ liệu giỏ hàng POS,Ô tiền thối hiển thị '25.000 đ' chữ đậm màu xanh,,High,Normal,Manual
+169,Click chip gợi ý tiền nhanh 'Đúng số tiền',Bán hàng tại quầy POS (Terminal),UI,Passed,"Đơn 87.500đ, click chip 'Đúng số tiền'",Dữ liệu giỏ hàng POS,"Ô tiền khách đưa tự động điền 87.500đ, tiền thối = 0đ",,High,Minor,Manual
+170,"Click chip gợi ý tiền nhanh 50k, 100k, 200k, 500k",Bán hàng tại quầy POS (Terminal),UI,Passed,Click chip '200k',Dữ liệu giỏ hàng POS,Ô tiền khách đưa tự động điền 200.000đ,,High,Minor,Manual
+171,Chặn thanh toán tiền mặt khi tiền khách đưa chưa đủ,Bán hàng tại quầy POS (Terminal),UI,Passed,"Đơn 100k, khách đưa 90k, bấm F9",Dữ liệu giỏ hàng POS,Cảnh báo: 'Tiền khách đưa chưa đủ để thanh toán!',,High,Major,Manual
+172,Chọn phương thức Chuyển khoản (BANK_TRANSFER),Bán hàng tại quầy POS (Terminal),UI,Passed,Click radio VietQR,Dữ liệu giỏ hàng POS,"Khung tiền mặt ẩn, khung mã VietQR tự động xuất hiện",,High,Normal,Manual
+173,Tự động sinh mã VietQR động chứa đúng số tiền thanh toán,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Đơn hàng 135.000đ, chọn VietQR",Dữ liệu giỏ hàng POS,Ảnh QR hiển thị với tham số amount=135000 và addInfo mã hóa đơn,,High,Major,Manual
+174,Thanh toán thành công lưu hóa đơn vào bảng INVOICES trong Oracle,Bán hàng tại quầy POS (Terminal),API,Passed,Gửi payload thanh toán hợp lệ,Dữ liệu giỏ hàng POS,Tạo bản ghi mới trong INVOICES với Status = 'COMPLETED',,High,Critical,Automated
+175,Lưu từng dòng mặt hàng vào bảng INVOICE_ITEMS,Bán hàng tại quầy POS (Terminal),API,Passed,Đơn có 3 món hàng,Dữ liệu giỏ hàng POS,Tạo 3 bản ghi trong INVOICE_ITEMS với đúng số lượng và đơn giá,,High,Critical,Automated
+176,Trừ tồn kho chi nhánh trong STORE_PRODUCTS sau khi bán,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,"Bán 3 chai nước, tồn cũ = 50",Dữ liệu giỏ hàng POS,Tồn kho trong STORE_PRODUCTS cập nhật thành 47,,High,Critical,Manual
+177,Trừ kho theo đúng nguyên tắc FIFO trong PRODUCT_BATCHES,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,Xuất hàng từ các lô có HSD gần nhất trước,Dữ liệu giỏ hàng POS,"Cột REMAINING_QUANTITY của lô cận date bị trừ trước, lưu INVOICE_ITEM_BATCHES",,High,Critical,Manual
+178,Ghi nhận nhật ký kho SALE trong INVENTORY_TRANSACTIONS,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,Kiểm tra log kho sau khi bán,Dữ liệu giỏ hàng POS,"Thêm bản ghi Type='SALE', Quantity mang dấu âm (-)",,High,Major,Manual
+179,Cộng điểm tích lũy mới cho khách hàng thành viên,Bán hàng tại quầy POS (Terminal),Integration Testing,Passed,Đơn thanh toán 250k -> tích 25 điểm,Dữ liệu giỏ hàng POS,Điểm của khách trong CUSTOMERS tăng thêm +25,,High,Major,Manual
+180,Hiển thị Modal Hóa đơn in nhiệt 80mm xem trước,Bán hàng tại quầy POS (Terminal),UI,Passed,Thanh toán xong,Dữ liệu giỏ hàng POS,Modal xuất hiện ở giữa màn hình với định dạng hóa đơn bán lẻ chuẩn,,High,Normal,Manual
+181,Xử lý đồng thời 2 thu ngân cùng bán sản phẩm cuối cùng (Concurrency),Bán hàng tại quầy POS (Terminal),Integration Testing,Failed,"Tồn kho = 1, 2 thu ngân cùng bấm Checkout đồng thời",Dữ liệu giỏ hàng POS,"Thu ngân 1 thành công, thu ngân 2 báo lỗi hết hàng an toàn",High,High,Cần cấu hình transaction isolation level hoặc optimistic concurrency,Automated
+182,Hiển thị bảng danh sách hóa đơn kèm 4 thẻ thống kê tài chính,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Vào /Invoices,Dữ liệu hóa đơn,"Hiển thị Tổng số HĐ, Doanh thu hợp lệ, Tổng chiết khấu, Số đơn hủy",,High,Normal,Manual
+183,Tìm kiếm hóa đơn theo Mã hóa đơn (HD...),Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Nhập mã hóa đơn cụ thể,Dữ liệu hóa đơn,Lọc chính xác hóa đơn có mã khớp,,High,Normal,Manual
+184,Tìm kiếm hóa đơn theo tên hoặc số điện thoại khách hàng,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Nhập SĐT khách hàng,Dữ liệu hóa đơn,Lọc ra tất cả các hóa đơn do khách hàng đó mua,,High,Normal,Manual
+185,Tìm kiếm hóa đơn theo tên nhân viên thu ngân,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Nhập tên thu ngân,Dữ liệu hóa đơn,Lọc danh sách hóa đơn do thu ngân đó lập,,High,Normal,Manual
+186,Lọc hóa đơn theo Trạng thái (Hoàn thành / Đã hủy),Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Chọn Status: CANCELLED,Dữ liệu hóa đơn,Chỉ hiển thị các hóa đơn đã bị hủy,,High,Normal,Manual
+187,Lọc hóa đơn theo Phương thức thanh toán (Tiền mặt / Thẻ / Chuyển khoản),Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Chọn Payment: TRANSFER,Dữ liệu hóa đơn,Chỉ hiển thị các đơn thanh toán qua VietQR/Chuyển khoản,,High,Normal,Manual
+188,"Lọc hóa đơn theo mốc thời gian Hôm nay, Hôm qua, 7 ngày, Tháng này",Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Chọn TimeRange: 7days,Dữ liệu hóa đơn,Lọc các hóa đơn phát sinh trong 7 ngày gần nhất,,High,Normal,Manual
+189,Lọc hóa đơn theo khoảng ngày tùy chọn (FromDate - ToDate),Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Nhập từ ngày 01/11 đến 10/11,Dữ liệu hóa đơn,Lọc chính xác các hóa đơn trong khung ngày,,High,Normal,Manual
+190,Xem chi tiết hóa đơn hiển thị đầy đủ mặt hàng và tổng tiền,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Vào /Invoices/Details/{id},Dữ liệu hóa đơn,"Hiển thị thông tin hóa đơn, bảng mặt hàng, giảm giá, điểm tiêu, tiền khách đưa",,High,Normal,Manual
+191,Xem chi tiết bóc tách lô hàng đã xuất cho từng món hàng,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,"Trong trang Details, quan sát chi tiết lô",Dữ liệu hóa đơn,Hiển thị mã lô BAT... và hạn dùng của từng lô đã xuất,,High,Major,Manual
+192,In lại hóa đơn bán lẻ từ nút In trên trang danh sách,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Bấm nút In tại dòng hóa đơn,Dữ liệu hóa đơn,Popup hóa đơn in nhiệt nạp dữ liệu và mở hộp thoại in,,High,Normal,Manual
+193,In lại hóa đơn từ trang chi tiết hóa đơn,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Bấm nút In hóa đơn trong trang Details,Dữ liệu hóa đơn,Mở popup in hóa đơn chuẩn 80mm,,High,Minor,Manual
+194,Hủy hóa đơn hoàn trả tồn kho sản phẩm trong STORE_PRODUCTS,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,"Hủy hóa đơn có 2 sản phẩm, nhập lý do",Dữ liệu hóa đơn,"Hóa đơn chuyển CANCELLED, tồn kho tự động cộng lại đúng số lượng",,High,Critical,Manual
+195,Hủy hóa đơn hoàn trả số lượng về đúng từng lô trong PRODUCT_BATCHES,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,Hủy hóa đơn xuất từ Lô 1 và Lô 2,Dữ liệu hóa đơn,Cột REMAINING_QUANTITY của cả 2 lô được hoàn lại chính xác,,High,Critical,Manual
+196,Hủy hóa đơn ghi nhận giao dịch hoàn kho RETURN vào nhật ký kho,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,Kiểm tra log kho sau khi hủy HĐ,Dữ liệu hóa đơn,Thêm bản ghi Type='RETURN' kèm mã HĐ và lý do hủy,,High,Major,Manual
+197,Hủy hóa đơn tự động thu hồi số điểm thưởng đã tích lũy của khách,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,"Khách được tích 20 điểm từ HĐ này, thực hiện hủy",Dữ liệu hóa đơn,Điểm của khách bị trừ đi 20 điểm đã tích,,High,Major,Manual
+198,Hủy hóa đơn tự động hoàn trả số điểm khách đã tiêu giảm trừ,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,"Khách dùng 50 điểm trừ tiền trong HĐ này, thực hiện hủy",Dữ liệu hóa đơn,50 điểm được cộng trả lại vào tài khoản khách,,High,Major,Manual
+199,Chặn hủy hóa đơn khi người dùng không nhập lý do hủy,Quản lý Hóa đơn & Hoàn kho (Invoices),UI,Passed,Để trống ô lý do hủy và bấm xác nhận,Dữ liệu hóa đơn,Báo lỗi: Vui lòng nhập lý do hủy hóa đơn,,High,Normal,Manual
+200,Chặn vai trò Thu ngân (CASHIER) thực hiện hủy hóa đơn,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,Thu ngân vào trang Details,Dữ liệu hóa đơn,"Nút Hủy hóa đơn bị ẩn hoàn toàn, gửi POST trực tiếp bị chặn 403",,High,Critical,Manual
+201,Xuất danh sách hóa đơn ra file Excel (CSV) có BOM tiếng Việt,Quản lý Hóa đơn & Hoàn kho (Invoices),Integration Testing,Passed,Bấm 'Xuất Excel (CSV)',Dữ liệu hóa đơn,File CSV tải về mở trên Excel hiển thị tiếng Việt chuẩn 100%,,High,Major,Manual
+202,Hiển thị bảng tồn kho tổng thể kèm 4 thẻ cảnh báo vận hành,Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Vào /Inventory,Dữ liệu tồn kho,"Thẻ hiển thị: Tổng mặt hàng, Cảnh báo sắp hết, Hết hàng, Hàng cận date",,High,Normal,Manual
+203,Cảnh báo mặt hàng sắp hết khi tồn kho nhỏ hơn hoặc bằng MinStock,Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,"Sản phẩm có tồn = 5, MinStock = 10",Dữ liệu tồn kho,Badge hiển thị màu vàng cảnh báo 'Tồn: 5 (Mức min: 10)',,High,Normal,Manual
+204,Cảnh báo mặt hàng hết hàng khi tồn kho bằng 0,Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Sản phẩm có tồn = 0,Dữ liệu tồn kho,Badge hiển thị màu đỏ 'Hết hàng (0)',,High,Normal,Manual
+205,Bộ lọc nhanh trạng thái Sắp hết hàng (LOW),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Chọn filter LOW,Dữ liệu tồn kho,Bảng chỉ hiển thị các sản phẩm có tồn <= MinStock,,High,Normal,Manual
+206,Bộ lọc nhanh trạng thái Hết hàng (OUT),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Chọn filter OUT,Dữ liệu tồn kho,Bảng chỉ lọc các mặt hàng hết hàng tồn = 0,,High,Normal,Manual
+207,Bộ lọc nhanh trạng thái Cận hạn sử dụng (EXPIRING <= 30 ngày),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Chọn filter EXPIRING,Dữ liệu tồn kho,Chỉ hiển thị các sản phẩm có lô hàng cận hạn trong 30 ngày tới,,High,Major,Manual
+208,Bộ lọc nhanh trạng thái Đã quá hạn sử dụng (EXPIRED),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Chọn filter EXPIRED,Dữ liệu tồn kho,Hiển thị các sản phẩm có lô hàng đã quá hạn sử dụng,,High,Major,Manual
+209,Lọc tồn kho theo danh mục sản phẩm,Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Chọn danh mục Gia vị,Dữ liệu tồn kho,Chỉ hiển thị tồn kho các sản phẩm thuộc nhóm Gia vị,,High,Normal,Manual
+210,Xem chi tiết các lô hàng của sản phẩm (/Inventory/Batches),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Bấm nút 'Xem lô',Dữ liệu tồn kho,"Hiển thị bảng danh sách lô: Mã lô barcode, Ngày nhập, HSD, Giá nhập, SL nhập, Còn lại",,High,Normal,Manual
+211,Tính toán chính xác số ngày còn hạn sử dụng của từng lô,Quản lý Tồn kho & Cảnh báo hạn (Inventory),Integration Testing,Passed,Lô có HSD sau 45 ngày,Dữ liệu tồn kho,Hiển thị text màu xanh: 'Còn 45 ngày',,High,Normal,Manual
+212,Tính toán số ngày đã quá hạn sử dụng và đánh dấu cảnh báo đỏ,Quản lý Tồn kho & Cảnh báo hạn (Inventory),Integration Testing,Passed,Lô có HSD trước ngày hiện tại 5 ngày,Dữ liệu tồn kho,"Hàng bảng chuyển table-danger, badge đỏ 'ĐÃ HẾT HẠN', ghi 'Đã quá hạn 5 ngày'",,High,Critical,Manual
+213,Đánh dấu lô hàng đã xuất hết (RemainingQuantity = 0),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Lô đã bán hết,Dữ liệu tồn kho,"Badge xám 'Đã xuất hết', không gây cảnh báo cận date giả",,High,Normal,Manual
+214,Mở modal kiểm kê điều chỉnh tồn kho (Stock Adjustment),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Bấm nút Sửa/Kiểm kê tại dòng sản phẩm,Dữ liệu tồn kho,"Modal mở ra hiển thị tên sản phẩm, số tồn hiện tại, ô nhập số tồn mới và lý do",,High,Normal,Manual
+215,Kiểm kê điều chỉnh tăng số lượng tồn kho thành công,Quản lý Tồn kho & Cảnh báo hạn (Inventory),Integration Testing,Passed,"Tồn cũ 50, kiểm đếm thực tế 52 (thừa 2), nhập lý do",Dữ liệu tồn kho,"Tồn kho trong STORE_PRODUCTS cập nhật 52, ghi log ADJUSTMENT (+2)",,High,Major,Manual
+216,Kiểm kê điều chỉnh giảm số lượng tồn kho thành công,Quản lý Tồn kho & Cảnh báo hạn (Inventory),Integration Testing,Passed,"Tồn cũ 50, kiểm đếm thực tế 48 (hao hụt 2), nhập lý do",Dữ liệu tồn kho,"Tồn kho cập nhật 48, ghi log ADJUSTMENT (-2)",,High,Major,Manual
+217,Chặn điều chỉnh tồn kho khi số lượng mới là số âm (< 0),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Nhập số lượng mới = -5,Dữ liệu tồn kho,Báo lỗi: Số lượng tồn kho không thể âm,,High,Normal,Manual
+218,Chặn điều chỉnh tồn kho khi bỏ trống lý do,Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Để trống ô lý do kiểm kê,Dữ liệu tồn kho,Báo lỗi: Vui lòng nhập lý do điều chỉnh tồn kho,,High,Normal,Manual
+219,Xem sổ nhật ký biến động kho chi tiết (/Inventory/History),Quản lý Tồn kho & Cảnh báo hạn (Inventory),UI,Passed,Vào /Inventory/History,Dữ liệu tồn kho,Bảng hiển thị chi tiết mọi giao dịch biến động kho theo dòng thời gian,,High,Normal,Manual
+220,"Lọc sổ kho theo từng loại giao dịch (SALE, IMPORT, RETURN, ADJUSTMENT, TRANSFER)",Quản lý Tồn kho & Cảnh báo hạn (Inventory),Integration Testing,Passed,Chọn filter Type = RETURN,Dữ liệu tồn kho,Chỉ hiển thị các giao dịch hoàn kho hủy hóa đơn hoặc hủy chuyển kho,,High,Normal,Manual
+221,Xuất báo cáo tồn kho ra file Excel (CSV) chuẩn UTF-8,Quản lý Tồn kho & Cảnh báo hạn (Inventory),Integration Testing,Passed,Bấm 'Xuất Excel (CSV)' tại trang Tồn kho,Dữ liệu tồn kho,File CSV tải về đầy đủ thông tin tồn thực tế và cảnh báo hạn,,High,Major,Manual
+222,Hiển thị danh sách phiếu nhập kho kèm thống kê tổng tiền nhập,Quản lý Nhập kho NCC (Import),UI,Passed,Vào /Import,Dữ liệu phiếu nhập,"Hiển thị Tổng số phiếu, Số phiếu hoàn thành, Tổng tiền nhập hàng và bảng phiếu",,High,Normal,Manual
+223,Lọc phiếu nhập theo nhà cung cấp và trạng thái,Quản lý Nhập kho NCC (Import),UI,Passed,"Chọn NCC Á Châu, Status: COMPLETED",Dữ liệu phiếu nhập,Lọc chính xác các phiếu nhập hoàn tất từ NCC Á Châu,,High,Normal,Manual
+224,Mở form tạo phiếu nhập kho mới,Quản lý Nhập kho NCC (Import),UI,Passed,Vào /Import/Create,Dữ liệu phiếu nhập,"Form mở ra với ngày nhập mặc định là hôm nay, danh sách NCC nạp từ DB",,High,Normal,Manual
+225,Thêm nhiều dòng sản phẩm động vào bảng nhập hàng,Quản lý Nhập kho NCC (Import),UI,Passed,Bấm 'Thêm dòng hàng' 5 lần,Dữ liệu phiếu nhập,"Bảng thêm 5 dòng mới có đầy đủ các ô chọn SP, số lượng, giá, HSD",,High,Normal,Manual
+226,Xóa bớt dòng hàng không cần thiết,Quản lý Nhập kho NCC (Import),UI,Passed,Click nút Xóa màu đỏ ở dòng thứ 2,Dữ liệu phiếu nhập,"Dòng thứ 2 biến mất, tổng tiền tự động tính lại",,High,Minor,Manual
+227,Tự động gợi ý đơn giá nhập gần nhất khi chọn sản phẩm,Quản lý Nhập kho NCC (Import),Integration Testing,Passed,Chọn sản phẩm SP001,Dữ liệu phiếu nhập,Ô giá nhập tự động điền giá của lần nhập trước,,High,Normal,Manual
+228,Tự động tính thành tiền từng dòng: Số lượng * Giá nhập,Quản lý Nhập kho NCC (Import),UI,Passed,"Nhập SL=20, Giá=30.000đ",Dữ liệu phiếu nhập,Thành tiền dòng tự động hiển thị 600.000đ,,High,Normal,Manual
+229,Tự động cộng dồn tổng tiền toàn bộ phiếu nhập kho,Quản lý Nhập kho NCC (Import),UI,Passed,Thêm 3 sản phẩm với giá khác nhau,Dữ liệu phiếu nhập,"Khung tổng kết tự động tính đúng tổng số mặt hàng, tổng SL và tổng tiền",,High,Normal,Manual
+230,Chặn tạo phiếu nhập khi chưa chọn Nhà cung cấp,Quản lý Nhập kho NCC (Import),UI,Passed,"Để trống NCC, bấm Lưu",Dữ liệu phiếu nhập,Báo lỗi: Vui lòng chọn nhà cung cấp,,High,Normal,Manual
+231,Chặn tạo phiếu nhập khi chưa có dòng sản phẩm nào,Quản lý Nhập kho NCC (Import),API,Passed,Submit payload Items rỗng,Dữ liệu phiếu nhập,Báo lỗi: Vui lòng thêm ít nhất một sản phẩm cần nhập kho,,High,Major,Automated
+232,Lập phiếu nhập thành công ở chế độ Duyệt ngay (CompleteImmediately = true),Quản lý Nhập kho NCC (Import),Integration Testing,Passed,"Điền hợp lệ, bật Duyệt ngay, bấm Lưu",Dữ liệu phiếu nhập,"Tạo phiếu COMPLETED, tăng tồn kho STORE_PRODUCTS, sinh lô PRODUCT_BATCHES",,High,Critical,Manual
+233,Tự động sinh mã vạch lô hàng định dạng BATyymmdd... duy nhất,Quản lý Nhập kho NCC (Import),Integration Testing,Passed,Kiểm tra bản ghi vừa tạo trong PRODUCT_BATCHES,Dữ liệu phiếu nhập,Mã BatchBarcode có tiền tố BAT kèm ngày tháng và số ngẫu nhiên duy nhất,,High,Major,Manual
+234,Ghi nhận nhật ký kho IMPORT vào INVENTORY_TRANSACTIONS,Quản lý Nhập kho NCC (Import),Integration Testing,Passed,Kiểm tra log kho,Dữ liệu phiếu nhập,"Thêm bản ghi Type='IMPORT', Quantity mang dấu dương (+)",,High,Major,Manual
+235,Tạo phiếu nhập ở trạng thái Lưu nháp (DRAFT),Quản lý Nhập kho NCC (Import),API,Passed,"Tắt công tắc Duyệt ngay, submit",Dữ liệu phiếu nhập,"Phiếu nhập lưu với Status = 'DRAFT', tồn kho CHƯA bị tăng",,High,Major,Automated
+236,Xem chi tiết phiếu nhập kho hiển thị đầy đủ thông tin,Quản lý Nhập kho NCC (Import),UI,Passed,Vào /Import/Details/{id},Dữ liệu phiếu nhập,"Hiển thị thông tin NCC, người tạo, người duyệt, danh sách SP và hạn dùng",,High,Normal,Manual
+237,Xác nhận duyệt nhập kho phiếu nháp (Confirm),Quản lý Nhập kho NCC (Import),Integration Testing,Passed,"Mở phiếu DRAFT, bấm 'Duyệt nhập kho'",Dữ liệu phiếu nhập,"Phiếu đổi sang COMPLETED, tăng tồn kho và sinh lô hàng",,High,Critical,Manual
+238,Hủy phiếu nhập kho nháp (Cancel),Quản lý Nhập kho NCC (Import),Integration Testing,Passed,"Mở phiếu DRAFT, bấm 'Hủy phiếu nhập'",Dữ liệu phiếu nhập,"Phiếu chuyển sang CANCELLED, không ảnh hưởng tồn kho",,High,Normal,Manual
+239,Chặn hủy phiếu nhập kho đã hoàn thành (COMPLETED),Quản lý Nhập kho NCC (Import),Integration Testing,Failed,Gửi POST /Import/Cancel cho phiếu COMPLETED,Dữ liệu phiếu nhập,Báo lỗi: Không thể hủy phiếu nhập đã hoàn thành (hàng đã vào kho),High,High,Cần tối ưu thông báo thân thiện hơn,Automated
+240,Xuất danh sách phiếu nhập kho ra file Excel (CSV),Quản lý Nhập kho NCC (Import),Integration Testing,Passed,Bấm 'Xuất Excel (CSV)' tại trang Nhập hàng,Dữ liệu phiếu nhập,"File CSV tải về đầy đủ thông tin mã phiếu, NCC, ngày nhập, tổng tiền",,High,Normal,Manual
+241,Cập nhật giá nhập gần nhất LastImportPrice trong bộ nhớ,Quản lý Nhập kho NCC (Import),Integration Testing,Passed,Nhập hàng với giá mới,Dữ liệu phiếu nhập,Giá mới được ghi nhận cho các lần nhập tiếp theo,,High,Normal,Manual
+242,Hiển thị danh sách phiếu chuyển kho kèm trạng thái vận chuyển,Điều chuyển kho nội bộ (Transfers),UI,Passed,Vào /Transfers,Dữ liệu chuyển kho,"Hiển thị Mã phiếu, Kho xuất, Kho nhận, Ngày tạo, Số mặt hàng, Trạng thái (IN_TRANSIT, COMPLETED)",,High,Normal,Manual
+243,Lọc phiếu chuyển theo kho xuất và kho nhận,Điều chuyển kho nội bộ (Transfers),UI,Passed,"Chọn Kho xuất = ST001, Kho nhận = ST002",Dữ liệu chuyển kho,Lọc chính xác các phiếu luân chuyển giữa 2 chi nhánh trên,,High,Normal,Manual
+244,Mở form tạo phiếu chuyển kho nội bộ,Điều chuyển kho nội bộ (Transfers),UI,Passed,Vào /Transfers/Create,Dữ liệu chuyển kho,Form hiển thị kho xuất và kho nhận với mũi tên trực quan,,High,Normal,Manual
+245,Chặn chọn chi nhánh xuất trùng với chi nhánh nhận,Điều chuyển kho nội bộ (Transfers),API,Passed,"FromStoreId = 1, ToStoreId = 1, submit",Dữ liệu chuyển kho,Báo lỗi: Chi nhánh xuất và chi nhánh nhận không được trùng nhau,,High,Major,Automated
+246,API tự động nạp danh sách sản phẩm có tồn kho tại kho xuất,Điều chuyển kho nội bộ (Transfers),API,Passed,Đổi chi nhánh xuất,Dữ liệu chuyển kho,API /Transfers/GetStoreProducts trả về các mặt hàng có tồn > 0 tại kho xuất,,High,Major,Automated
+247,Chặn chuyển kho khi sản phẩm tại kho xuất hết hàng (Stock = 0),Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,Chọn sản phẩm hết hàng,Dữ liệu chuyển kho,Sản phẩm không có trong danh sách chọn điều chuyển,,High,Normal,Manual
+248,Chặn nhập số lượng chuyển vượt quá tồn kho thực tế của kho xuất,Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,"Tồn = 8, nhập SL chuyển = 10",Dữ liệu chuyển kho,Báo lỗi: Sản phẩm không đủ số lượng tồn để chuyển (Tồn: 8),,High,Critical,Manual
+249,Tạo phiếu chuyển kho thành công ở chế độ Vận chuyển (IN_TRANSIT),Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,Chuyển 5 cái từ Kho 1 sang Kho 2 (CompleteImmediately=false),Dữ liệu chuyển kho,"Phiếu tạo với status IN_TRANSIT, Kho 1 bị trừ 5 cái ngay, log TRANSFER_OUT",,High,Critical,Manual
+250,Tạo phiếu chuyển kho Hoàn tất ngay (CompleteImmediately = true),Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,"Bật Hoàn tất ngay, submit",Dữ liệu chuyển kho,"Phiếu COMPLETED, Kho 1 trừ tồn, Kho 2 tăng tồn cùng lúc",,High,Major,Manual
+251,Xem chi tiết phiếu chuyển kho,Điều chuyển kho nội bộ (Transfers),UI,Passed,Vào /Transfers/Details/{id},Dữ liệu chuyển kho,"Hiển thị thông tin kho đi, kho đến, danh sách hàng và số lượng chuyển",,High,Normal,Manual
+252,Kho nhận xác nhận nhận đủ hàng (Receive),Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,"Mở phiếu IN_TRANSIT, bấm 'Xác nhận nhận hàng'",Dữ liệu chuyển kho,"Phiếu đổi sang COMPLETED, kho nhận tăng tồn kho, ghi log TRANSFER_IN",,High,Critical,Manual
+253,Hủy phiếu chuyển kho đang vận chuyển hoàn trả hàng về kho xuất,Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,"Mở phiếu IN_TRANSIT, bấm 'Hủy phiếu', nhập lý do",Dữ liệu chuyển kho,"Phiếu chuyển CANCELLED, kho xuất được cộng lại đúng số lượng đã trừ, log RETURN",,High,Critical,Manual
+254,Chặn hủy phiếu chuyển kho đã hoàn thành (COMPLETED),Điều chuyển kho nội bộ (Transfers),API,Passed,Cố tình gọi Cancel cho phiếu đã hoàn tất,Dữ liệu chuyển kho,Hệ thống chặn không cho hủy,,High,Major,Automated
+255,Hiển thị badge trạng thái chuyển kho rõ ràng,Điều chuyển kho nội bộ (Transfers),UI,Passed,Quan sát bảng chuyển kho,Dữ liệu chuyển kho,"IN_TRANSIT: Vàng 'Đang vận chuyển', COMPLETED: Xanh 'Hoàn thành', CANCELLED: Đỏ",,High,Minor,Manual
+256,Ghi chú biển số xe hoặc lý do điều chuyển,Điều chuyển kho nội bộ (Transfers),UI,Passed,Nhập Note: 'Xe tải 29C-12345',Dữ liệu chuyển kho,Ghi chú được lưu vào phiếu và hiển thị trên bảng chi tiết,,High,Minor,Manual
+257,Xuất danh sách phiếu chuyển kho ra file Excel (CSV),Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,Bấm 'Xuất Excel (CSV)',Dữ liệu chuyển kho,File CSV tải về đầy đủ thông tin điều chuyển,,High,Normal,Manual
+258,Kiểm tra toàn vẹn số lượng điều chuyển không bị thất thoát,Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,Tổng tồn Kho 1 + Kho 2 trước và sau khi hoàn tất chuyển,Dữ liệu chuyển kho,Tổng tồn kho toàn hệ thống được bảo toàn chính xác 100%,,High,Critical,Manual
+259,Chặn nhân viên thu ngân tự ý lập phiếu điều chuyển kho,Điều chuyển kho nội bộ (Transfers),Integration Testing,Passed,Thu ngân truy cập /Transfers/Create,Dữ liệu chuyển kho,Bị chặn bởi phân quyền Role,,High,Major,Manual
+260,Hiển thị danh sách khuyến mãi kèm thẻ thống kê Đang chạy / Sắp chạy,Chương trình Khuyến mãi (Promotions),UI,Passed,Vào /Promotions,Dữ liệu khuyến mãi,"Hiển thị thẻ: Tổng số CT, Đang diễn ra, Sắp diễn ra và bảng danh sách",,High,Normal,Manual
+261,Lọc chương trình khuyến mãi theo hình thức ưu đãi,Chương trình Khuyến mãi (Promotions),UI,Passed,Chọn Type = PERCENTAGE,Dữ liệu khuyến mãi,Chỉ hiển thị các chương trình giảm giá theo %,,High,Normal,Manual
+262,"Lọc chương trình khuyến mãi theo trạng thái (Đang chạy, Sắp chạy, Hết hạn)",Chương trình Khuyến mãi (Promotions),UI,Passed,Chọn Status = RUNNING,Dữ liệu khuyến mãi,Lọc các chương trình đang trong khoảng ngày hiệu lực và IsActive=true,,High,Normal,Manual
+263,Mở form tạo chương trình khuyến mãi mới,Chương trình Khuyến mãi (Promotions),UI,Passed,Vào /Promotions/Create,Dữ liệu khuyến mãi,Form mở ra với hình thức mặc định là Giảm %,,High,Normal,Manual
+264,Tạo khuyến mãi Giảm theo % (PERCENTAGE) cho nhiều sản phẩm,Chương trình Khuyến mãi (Promotions),API,Passed,"Tạo CT 'Giảm giá hè 15%', áp dụng SP001 và SP002 giảm 15%",Dữ liệu khuyến mãi,Lưu vào PROMOTIONS và PROMOTION_ITEMS với DiscountPercent=15,,High,Critical,Automated
+265,Tạo khuyến mãi Giảm số tiền cố định (FIXED_AMOUNT),Chương trình Khuyến mãi (Promotions),API,Passed,Tạo CT giảm 10.000đ cho sản phẩm Dầu ăn,Dữ liệu khuyến mãi,Lưu vào DB với DiscountAmount=10000,,High,Major,Automated
+266,Tạo khuyến mãi Mua X tặng Y (BUY_X_GET_Y),Chương trình Khuyến mãi (Promotions),API,Passed,Cấu hình Mua 2 tặng 1 cho nước giải khát,Dữ liệu khuyến mãi,"Lưu vào DB với BuyQty=2, GetQty=1",,High,Major,Automated
+267,Chặn tạo khuyến mãi khi Ngày kết thúc nhỏ hơn Ngày bắt đầu,Chương trình Khuyến mãi (Promotions),UI,Passed,"Chọn EndDate < StartDate, submit",Dữ liệu khuyến mãi,Báo lỗi: Ngày kết thúc không được nhỏ hơn ngày bắt đầu,,High,Normal,Manual
+268,Chặn tạo khuyến mãi khi chưa chọn sản phẩm nào,Chương trình Khuyến mãi (Promotions),API,Passed,Submit payload Items rỗng,Dữ liệu khuyến mãi,Báo lỗi: Vui lòng thêm ít nhất một sản phẩm áp dụng,,High,Normal,Automated
+269,Bật / Tắt trạng thái kích hoạt chương trình khuyến mãi nhanh (ToggleStatus),Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,Bấm nút Toggle tại dòng khuyến mãi,Dữ liệu khuyến mãi,Chương trình chuyển đổi trạng thái tức thì giữa Hoạt động và Tạm ngưng,,High,Normal,Manual
+270,Chỉnh sửa thông tin chương trình khuyến mãi (/Promotions/Edit),Chương trình Khuyến mãi (Promotions),API,Passed,Sửa tên chương trình và gia hạn thêm ngày kết thúc,Dữ liệu khuyến mãi,Cập nhật thành công vào CSDL,,High,Normal,Automated
+271,Xóa chương trình khuyến mãi thành công,Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,Bấm Xóa chương trình và xác nhận,Dữ liệu khuyến mãi,Xóa các bản ghi con trong PROMOTION_ITEMS rồi xóa PROMOTIONS,,High,Normal,Manual
+272,Tự động sinh ID thủ công không bị lỗi ORA-01400 trong Oracle,Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,Tạo khuyến mãi mới trong Oracle,Dữ liệu khuyến mãi,Code tự sinh Max(Id)+1 triệt tiêu hoàn toàn lỗi ORA-01400,,High,Critical,Manual
+273,Sản phẩm có khuyến mãi tự động hiển thị huy hiệu giảm giá tại POS,Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,"SP001 có khuyến mãi -15%, mở POS",Dữ liệu khuyến mãi,Card sản phẩm trên POS hiển thị tag đỏ '-15%' và giá gạch ngang ưu đãi,,High,Critical,Manual
+274,POS tự động áp dụng giá khuyến mãi khi thêm vào giỏ hàng,Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,Thêm SP001 vào giỏ hàng trên POS,Dữ liệu khuyến mãi,Giỏ hàng tính đúng giá sau khi đã giảm 15%,,High,Critical,Manual
+275,Khuyến mãi hết hạn (EndDate < hiện tại) tự động ngừng áp dụng tại POS,Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,Chương trình có EndDate ngày hôm qua,Dữ liệu khuyến mãi,"POS tự động không áp dụng giá giảm, bán với giá gốc",,High,Major,Manual
+276,Khuyến mãi bị Tắt (IsActive = false) tự động ngừng áp dụng tại POS,Chương trình Khuyến mãi (Promotions),Integration Testing,Passed,"Bấm Tắt chương trình khuyến mãi, mở POS",Dữ liệu khuyến mãi,POS ngay lập tức quay lại bán giá gốc bình thường,,High,Major,Manual
+277,Hỗ trợ nhập mức giảm % từ 1% đến tối đa 100%,Chương trình Khuyến mãi (Promotions),UI,Passed,Nhập % giảm = 50%,Dữ liệu khuyến mãi,Hệ thống chấp nhận mức giảm hợp lệ,,High,Minor,Manual
+278,Dashboard hiển thị chính xác Doanh thu và Số đơn hàng hôm nay,Dashboard & Báo cáo thống kê (Reports),UI,Passed,So sánh số trên card Doanh thu hôm nay với tổng tiền các hóa đơn COMPLETED trong ngày,Dữ liệu báo cáo,Số liệu khớp 100% dữ liệu thực tế,,High,Major,Manual
+279,Dashboard hiển thị Doanh thu và Số hóa đơn lũy kế tháng này,Dashboard & Báo cáo thống kê (Reports),UI,Passed,Quan sát card Doanh thu tháng này,Dữ liệu báo cáo,Tổng hợp chính xác doanh thu từ ngày đầu tháng đến hiện tại,,High,Major,Manual
+280,Biểu đồ Chart.js đường (Line) thể hiện xu hướng doanh thu 7 ngày qua,Dashboard & Báo cáo thống kê (Reports),UI,Passed,Quan sát biểu đồ Doanh thu 7 ngày gần nhất,Dữ liệu báo cáo,"Đường biểu đồ vẽ mượt mà, trục Y tiền tệ, tooltip hiển thị ngày và số tiền chi tiết",,High,Normal,Manual
+281,Biểu đồ Chart.js tròn (Doughnut) cơ cấu phương thức thanh toán,Dashboard & Báo cáo thống kê (Reports),UI,Passed,Quan sát biểu đồ tròn,Dữ liệu báo cáo,"Hiển thị tỷ lệ % chính xác giữa Tiền mặt, VietQR và Thẻ ngân hàng",,High,Normal,Manual
+282,Bảng xếp hạng Top 5 sản phẩm bán chạy nhất tháng kèm progress bar,Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,Kiểm tra danh sách Top 5 sản phẩm trên Dashboard,Dữ liệu báo cáo,"Hiển thị đúng thứ tự số lượng bán, tên sản phẩm, doanh thu và thanh đo %",,High,Major,Manual
+283,Cảnh báo kho hàng hiển thị số mặt hàng sắp hết và lô cận date,Dashboard & Báo cáo thống kê (Reports),UI,Passed,Hệ thống có hàng sắp hết và lô cận date,Dữ liệu báo cáo,Banner vàng hiển thị số lượng chính xác và nút 'Kiểm tra kho ngay',,High,Normal,Manual
+284,Trang Báo cáo tài chính chuyên sâu (/Reports) tính toán Giá vốn (COGS),Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,"Vào /Reports, kiểm tra thẻ Giá vốn hàng bán",Dữ liệu báo cáo,Giá vốn được tính chính xác dựa trên giá nhập của từng lô đã xuất theo FIFO,,High,Critical,Manual
+285,Tính toán Lợi nhuận gộp (Gross Profit) = Doanh thu - Giá vốn,Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,"Doanh thu 10.000.000đ, Giá vốn 7.000.000đ",Dữ liệu báo cáo,Thẻ Lợi nhuận gộp hiển thị chính xác 3.000.000đ (Biên LN: 30.0%),,High,Critical,Manual
+286,Tính toán Giá trị đơn hàng trung bình (AOV - Average Order Value),Dashboard & Báo cáo thống kê (Reports),API,Passed,Doanh thu 2.000.000đ từ 10 đơn hàng,Dữ liệu báo cáo,Thẻ AOV hiển thị chính xác 200.000đ/đơn,,High,Normal,Automated
+287,Biểu đồ Combo Bar & Line thể hiện tương quan Doanh thu và Lợi nhuận theo ngày,Dashboard & Báo cáo thống kê (Reports),UI,Passed,Quan sát biểu đồ combo trên trang Báo cáo,Dữ liệu báo cáo,"Cột xanh thể hiện doanh thu, đường xanh lá thể hiện lợi nhuận gộp theo từng ngày",,High,Normal,Manual
+288,Biểu đồ Doughnut thể hiện cơ cấu doanh thu theo Danh mục hàng hóa,Dashboard & Báo cáo thống kê (Reports),UI,Passed,Quan sát biểu đồ danh mục,Dữ liệu báo cáo,"Phân bổ doanh thu theo từng nhóm Bánh kẹo, Nước giải khát, Gia vị...",,High,Normal,Manual
+289,Bảng Top 10 sản phẩm đạt doanh số cao nhất trong kỳ báo cáo,Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,Quan sát bảng Top 10 trên trang Báo cáo,Dữ liệu báo cáo,"Hiển thị đầy đủ thứ hạng 1-10, tên SP, danh mục, số lượng bán và doanh thu",,High,Major,Manual
+290,Bảng phân tích hiệu suất doanh số theo từng nhân viên thu ngân,Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,Quan sát bảng Doanh số theo thu ngân,Dữ liệu báo cáo,Nhóm chính xác số hóa đơn đã lập và tổng tiền mang về của từng thu ngân,,High,Major,Manual
+291,"Lọc báo cáo theo các mốc thời gian định sẵn (Hôm nay, Hôm qua, 7 ngày, Tháng này, Tháng trước)",Dashboard & Báo cáo thống kê (Reports),UI,Passed,Chọn các mốc khác nhau trên dropdown,Dữ liệu báo cáo,"Toàn bộ số liệu KPI, biểu đồ và các bảng tự động cập nhật tức thì",,High,Normal,Manual
+292,Lọc báo cáo theo khoảng ngày tùy chọn (FromDate - ToDate),Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,"Chọn 'Tùy chọn khoảng ngày...', nhập 01/11 đến 15/11",Dữ liệu báo cáo,"Hai ô chọn ngày hiển thị, lọc chính xác dữ liệu trong khoảng thời gian",,High,Major,Manual
+293,Lọc báo cáo tài chính theo từng chi nhánh độc lập (dành cho Admin),Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,Admin chọn Chi nhánh 1 rồi chọn Chi nhánh 2,Dữ liệu báo cáo,Báo cáo bóc tách riêng số liệu của từng chi nhánh,,High,Major,Manual
+294,In báo cáo trực tiếp bằng nút 'In báo cáo',Dashboard & Báo cáo thống kê (Reports),UI,Passed,Click nút In báo cáo,Dữ liệu báo cáo,Mở hộp thoại Print của trình duyệt với layout trang in sạch sẽ,,High,Minor,Manual
+295,Xuất báo cáo tài chính bán hàng ra file Excel (CSV) có BOM tiếng Việt,Dashboard & Báo cáo thống kê (Reports),Integration Testing,Passed,Click 'Xuất báo cáo (CSV)',Dữ liệu báo cáo,"File CSV tải về đầy đủ dòng tiêu đề tổng kết và chi tiết từng hóa đơn, hiển thị chuẩn trên Excel",,High,Major,Manual
+296,Bảo vệ chống tấn công CSRF (Cross-Site Request Forgery),"Phi chức năng, Bảo mật & Hiệu năng",API,Passed,Gửi request POST không kèm RequestVerificationToken,Dữ liệu kiểm thử bảo mật & hiệu năng,Hệ thống từ chối request với mã lỗi 400 Bad Request,,High,Critical,Automated
+297,Bảo vệ chống tấn công SQL Injection bằng Parameterized Queries,"Phi chức năng, Bảo mật & Hiệu năng",API,Passed,"Nhập chuỗi độc hại ""' OR '1'='1"" vào ô tìm kiếm",Dữ liệu kiểm thử bảo mật & hiệu năng,"EF Core tham số hóa an toàn, không xảy ra SQL Injection",,High,Critical,Automated
+298,Bảo vệ chống tấn công XSS (Cross-Site Scripting),"Phi chức năng, Bảo mật & Hiệu năng",UI,Passed,Nhập tên sản phẩm chứa thẻ <script>alert(1)</script>,Dữ liệu kiểm thử bảo mật & hiệu năng,"Razor view tự động HTML-encode, hiển thị dưới dạng văn bản an toàn",,High,Critical,Manual
+299,Cookie xác thực được cấu hình cờ HttpOnly và Secure,"Phi chức năng, Bảo mật & Hiệu năng",API,Passed,Kiểm tra thuộc tính cookie .AspNetCore.Cookies,Dữ liệu kiểm thử bảo mật & hiệu năng,Cờ HttpOnly = true ngăn chặn đánh cắp cookie qua mã độc JavaScript,,High,Critical,Automated
+300,"Tương thích đa trình duyệt: Google Chrome, Apple Safari, Mozilla Firefox, Microsoft Edge","Phi chức năng, Bảo mật & Hiệu năng",UI,Passed,Mở hệ thống trên cả 4 trình duyệt phổ biến,Dữ liệu kiểm thử bảo mật & hiệu năng,"Giao diện hiển thị nhất quán, CSS Grid/Flexbox hoạt động hoàn hảo, không lỗi vỡ layout",,High,Major,Manual
+301,"Responsive giao diện trên các độ phân giải màn hình khác nhau (Desktop, Laptop, Tablet)","Phi chức năng, Bảo mật & Hiệu năng",UI,Passed,Co giãn kích thước cửa sổ trình duyệt từ 1920px xuống 768px,Dữ liệu kiểm thử bảo mật & hiệu năng,"Sidebar tự động co gọn, bảng dữ liệu hỗ trợ cuộn ngang table-responsive không tràn viền",,High,Normal,Manual
+302,Hiệu năng tìm kiếm barcode POS tức thì dưới 50ms,"Phi chức năng, Bảo mật & Hiệu năng",Integration Testing,Passed,"Nạp 1000 sản phẩm vào CSDL Oracle, quét mã vạch trên POS",Dữ liệu kiểm thử bảo mật & hiệu năng,"Thời gian tìm kiếm và hiển thị sản phẩm đạt dưới 50ms, đáp ứng tốc độ quầy thu ngân giờ cao điểm",,High,Major,Manual
+
+
+id,title,test case id,assignee,actual result,status,severity,attachments
+1,Lỗi ORA-00904 khi truy vấn bảng PRODUCTS do cột LAST_IMPORT_PRICE không tồn tại trong Oracle,19,Hau Hoang,"Oracle ném ngoại lệ ORA-00904: p.LAST_IMPORT_PRICE invalid identifier khi truy cập các trang Suppliers, Inventory, Products. Nguyên nhân do schema gốc trong Oracle không có cột này nhưng Entity Product.cs lại khai báo mapping. Đã khắc phục bằng cách đánh dấu thuộc tính [NotMapped] trên Product.cs.",Resolved,Critical,media_1794757626114_bd29e98d.jpg
+2,Lỗi ORA-01400 không tự động sinh khóa chính khi tạo chương trình khuyến mãi (PROMOTIONS),272,Hau Hoang,"Bảng PROMOTIONS trong file DDL Oracle UTC_1 không có thuộc tính IDENTITY trên cột ID, khiến EF Core insert bị giá trị NULL gây lỗi ORA-01400. Đã khắc phục bằng cách bỏ DatabaseGeneratedOption.Identity và tự động tính toán ID kế tiếp trong PromotionsController.",Resolved,Major,
+3,Không có âm thanh phản hồi khi quét mã vạch thành công trên màn hình POS,151,Hau Hoang,Thu ngân khó nhận biết khi quét thành công mặt hàng nếu không liên tục nhìn vào màn hình. Đã tích hợp Web Audio API (AudioContext) phát tiếng bíp chuẩn siêu thị 1750Hz trong 0.08s mỗi khi quét mã thành công.,Resolved,Normal,
+4,Mất dữ liệu giỏ hàng khi phục vụ khách hàng khác đang cần thời gian lựa chọn thêm đồ,161,Hau Hoang,"Thu ngân phải xóa giỏ của khách cũ để tính tiền cho khách sau khi khách cũ quên ví hoặc đi lấy thêm đồ. Đã giải quyết triệt để bằng tính năng Treo đơn đa phiên (Đơn 1, Đơn 2, Đơn 3) với bộ nhớ đệm độc lập cho từng tab.",Resolved,Major,
+5,Xuất file CSV bị lỗi phông chữ tiếng Việt có dấu khi mở trên Microsoft Excel,67,Hau Hoang,"Các ký tự tiếng Việt có dấu như 'Bánh kẹo', 'Chuyển khoản' bị biến thành ký tự lạ khi mở bằng Microsoft Excel do thiếu bảng mã nhận diện. Đã xử lý bổ sung mã UTF-8 BOM (0xEF, 0xBB, 0xBF) vào đầu file xuất.",Resolved,Normal,
+6,Lỗi CS0023 Operator '?' cannot be applied to operand of type 'DateTime',61,Hau Hoang,"Thuộc tính CreatedAt kế thừa từ BaseEntity là kiểu DateTime không nullable, nhưng Razor view sử dụng CreatedAt?.ToString gây lỗi biên dịch. Đã chuẩn hóa lại cú pháp CreatedAt.ToString('dd/MM/yyyy') trên toàn bộ views.",Resolved,Normal,
+7,Lỗi CS1061 'Supplier' does not contain definition for 'Code',25,Hau Hoang,"Thuộc tính mã nhà cung cấp trong Entity Supplier được đặt tên là SupplierCode thay vì Code, gây lỗi biên dịch trong view phiếu nhập kho. Đã chuẩn hóa đồng bộ sang SupplierCode.",Resolved,Normal,
+8,Lỗi 400 Bad Request trên các request AJAX POST do thiếu Antiforgery Header,77,Hau Hoang,"Các request AJAX POST JSON như Tạo phiếu nhập kho, Thanh toán POS bị chặn lỗi 400 vì thiếu header token CSRF. Đã cấu hình AddAntiforgery(options => options.HeaderName = 'RequestVerificationToken') trong Program.cs.",Resolved,Critical,
+9,Chưa chặn trường hợp nhập số lượng chuyển kho lớn hơn tồn kho thực tế của chi nhánh xuất,248,Hau Hoang,Người dùng nhập số lượng chuyển vượt quá số lượng hàng có trong kho khiến tồn kho bị âm. Đã bổ sung bước kiểm tra điều kiện tồn kho thực tế trước khi thực hiện trừ kho trong TransfersController.,Resolved,Major,
+10,Chưa kiểm tra ngày kết thúc khuyến mãi nhỏ hơn ngày bắt đầu,267,Hau Hoang,Người dùng có thể chọn EndDate trước StartDate gây lỗi logic chiến dịch. Đã bổ sung validation ở cả client và server chặn tạo khuyến mãi khi EndDate < StartDate.,Resolved,Normal,
+11,Chưa hiển thị mã VietQR động khi chọn hình thức thanh toán chuyển khoản,172,Hau Hoang,Màn hình POS ban đầu chỉ hiển thị radio chuyển khoản nhưng không có mã QR khiến khách hàng phải gõ STK thủ công. Đã tích hợp API sinh mã VietQR Napas247 động tự động điền đúng số tiền và nội dung hóa đơn.,Resolved,Major,
+12,Số lượng trong giỏ hàng POS bị giảm về số âm khi bấm nút trừ liên tục,156,Hau Hoang,"Khi bấm nút (-) liên tục, số lượng có thể giảm về 0 hoặc số âm. Đã chuẩn hóa logic: khi số lượng giảm về 0 thì tự động gỡ sản phẩm ra khỏi giỏ hàng.",Resolved,Normal,
+13,Lỗi đồng thời (Concurrency) khi 2 thu ngân cùng bán mặt hàng chỉ còn đúng 1 sản phẩm,181,Hau Hoang,"Khi tồn kho chỉ còn 1 cái và 2 thu ngân cùng checkout trong cùng 1 giây, cả 2 giao dịch có thể cùng đọc tồn kho = 1. Cần cấu hình mức cô lập transaction hoặc lock bi quan (pessimistic lock) trên Oracle.",Open,Major,
+14,Chặn người dùng vai trò Thu ngân (CASHIER) tự ý hủy hóa đơn đã hoàn thành,199,Hau Hoang,"Nút Hủy hóa đơn ban đầu hiển thị cho tất cả người dùng, tiềm ẩn rủi ro gian lận hoàn kho. Đã bổ sung phân quyền ẩn nút Hủy trên UI và chặn Authorize(Roles = 'ADMIN,STORE_MANAGER') trên action Cancel.",Resolved,Critical,
+15,Biểu đồ Chart.js bị vỡ layout khi co giãn cửa sổ trình duyệt trên màn hình nhỏ,280,Hau Hoang,Biểu đồ canvas không tự co giãn khi chuyển sang giao diện mobile. Đã cấu hình thuộc tính responsive: true và maintainAspectRatio: false kèm bọc trong thẻ div định kích thước cố định.,Resolved,Normal,

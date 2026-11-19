@@ -1,0 +1,93 @@
+@model MiniMart.Web.Models.Entities.Product
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card-custom">
+            <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2 text-primary"></i> Sửa sản phẩm: @Model.Name</h5>
+
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ProductCode" />
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Mã sản phẩm</label>
+                        <input value="@Model.ProductCode" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Barcode" class="form-label small fw-semibold">Mã vạch (Barcode)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-upc-scan"></i></span>
+                            <input asp-for="Barcode" class="form-control border-start-0 font-monospace" />
+                        </div>
+                        <span asp-validation-for="Barcode" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label small fw-semibold">Tên sản phẩm *</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="CategoryId" class="form-label small fw-semibold">Danh mục hàng hóa *</label>
+                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="SupplierId" class="form-label small fw-semibold">Nhà cung cấp</label>
+                        <select asp-for="SupplierId" class="form-select" asp-items="ViewBag.Suppliers">
+                            <option value="">-- Chọn nhà cung cấp --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="Unit" class="form-label small fw-semibold">Đơn vị tính *</label>
+                        <select asp-for="Unit" class="form-select">
+                            <option value="Cái">Cái</option>
+                            <option value="Hộp">Hộp</option>
+                            <option value="Lon">Lon</option>
+                            <option value="Chai">Chai</option>
+                            <option value="Gói">Gói</option>
+                            <option value="Túi">Túi</option>
+                            <option value="Kg">Kg</option>
+                            <option value="Lốc">Lốc</option>
+                            <option value="Thùng">Thùng</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="DefaultPrice" class="form-label small fw-semibold">Giá bán lẻ (VNĐ) *</label>
+                        <input asp-for="DefaultPrice" type="number" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Status" class="form-label small fw-semibold">Trạng thái kinh doanh</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="ACTIVE">Đang bán</option>
+                            <option value="DISCONTINUED">Ngừng bán</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label small fw-semibold">Mô tả sản phẩm</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary rounded-3">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

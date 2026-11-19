@@ -1,0 +1,57 @@
+@model MiniMart.Web.Models.Entities.Customer
+@{
+    ViewData["Title"] = "Đăng ký khách hàng mới";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card-custom">
+            <h5 class="fw-bold mb-3"><i class="bi bi-person-plus me-2 text-primary"></i> Đăng ký khách hàng thân thiết</h5>
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="MemberCode" class="form-label small fw-semibold">Mã thành viên *</label>
+                        <input asp-for="MemberCode" class="form-control" />
+                        <span asp-validation-for="MemberCode" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Phone" class="form-label small fw-semibold">Số điện thoại *</label>
+                        <input asp-for="Phone" class="form-control" placeholder="09xxxxxxx" autofocus />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label small fw-semibold">Họ và tên khách hàng *</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Ví dụ: Trần Thị Mai" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label small fw-semibold">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="khachhang@gmail.com" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DateOfBirth" class="form-label small fw-semibold">Ngày sinh (Ưu đãi sinh nhật)</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Address" class="form-label small fw-semibold">Địa chỉ</label>
+                    <input asp-for="Address" class="form-control" placeholder="Địa chỉ giao hàng hoặc cư trú" />
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary rounded-3">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Đăng ký khách hàng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

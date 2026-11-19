@@ -1,0 +1,316 @@
+@model MiniMart.Web.Models.ViewModels.CreateTransferDto
+@{
+    ViewData["Title"] = "Tạo phiếu chuyển kho";
+    var stores = ViewBag.Stores as List<MiniMart.Web.Models.Entities.Store> ?? new();
+    var availableProducts = ViewBag.AvailableProducts as List<MiniMart.Web.Models.Entities.StoreProduct> ?? new();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <h2 class="h4 mb-0 text-slate-900 fw-bold">Tạo phiếu chuyển kho nội bộ</h2>
+            <p class="text-muted small mb-0">Luân chuyển hàng hóa giữa các điểm bán trực thuộc chuỗi siêu thị</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Thông tin kho xuất và nhận -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-geo-alt me-2 text-primary"></i>Điểm điều chuyển</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Chi nhánh xuất hàng <span class="text-danger">*</span></label>
+                    <select id="fromStoreId" class="form-select" onchange="onFromStoreChanged()" required>
+                        @foreach (var s in stores)
+                        {
+                            <option value="@s.Id" selected="@(s.Id == Model.FromStoreId)">@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="text-center my-2 text-muted">
+                    <i class="bi bi-arrow-down-circle fs-4 text-primary"></i>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Chi nhánh nhận hàng <span class="text-danger">*</span></label>
+                    <select id="toStoreId" class="form-select" required>
+                        <option value="">-- Chọn chi nhánh nhận --</option>
+                        @foreach (var s in stores)
+                        {
+                            <option value="@s.Id" selected="@(s.Id == Model.ToStoreId)">@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Ghi chú điều chuyển</label>
+                    <textarea id="transferNote" rows="3" class="form-control" placeholder="Lý do điều chuyển, biển số xe vận chuyển..."></textarea>
+                </div>
+
+                <div class="form-check form-switch p-3 bg-light rounded-3 mb-3">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="completeImmediately" checked>
+                    <label class="form-check-label fw-bold small" for="completeImmediately">
+                        Hoàn tất chuyển kho ngay
+                    </label>
+                    <div class="text-muted" style="font-size: 11.5px;">Tự động trừ kho xuất và cộng kho nhận cùng lúc</div>
+                </div>
+
+                <!-- Thống kê -->
+                <div class="p-3 bg-light rounded-3 text-slate-900">
+                    <div class="d-flex justify-content-between mb-1 small">
+                        <span>Số loại mặt hàng:</span>
+                        <strong id="summaryItemCount">0</strong>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span>Tổng số lượng điều chuyển:</span>
+                        <strong id="summaryTotalQty">0</strong>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary w-100 py-2 fw-medium shadow-sm" onclick="submitTransfer()">
+                        <i class="bi bi-check-circle me-1"></i> Lưu phiếu chuyển kho
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Bảng chọn hàng hóa chuyển -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-box-seam me-2 text-primary"></i>Danh sách mặt hàng điều chuyển</h6>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="addNewTransferRow()">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm mặt hàng
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0" id="transferTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50%;">Sản phẩm (Tại kho xuất)</th>
+                                <th style="width: 20%;" class="text-center">Tồn kho hiện có</th>
+                                <th style="width: 22%;" class="text-center">Số lượng chuyển</th>
+                                <th style="width: 8%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="transferTableBody">
+                            <!-- Rows added via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyNotice" class="text-center py-5 text-muted">
+                    <i class="bi bi-arrow-left-right display-5 d-block mb-2 text-slate-300"></i>
+                    Chưa có mặt hàng nào. Nhấn "Thêm mặt hàng" để chọn hàng cần chuyển.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        let currentProducts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(availableProducts.Select(sp => new {
+            storeProductId = sp.Id,
+            productId = sp.ProductId,
+            productName = sp.Product.Name,
+            productCode = sp.Product.ProductCode,
+            unit = sp.Product.Unit,
+            stockQuantity = sp.StockQuantity
+        })));
+
+        let rowCounter = 0;
+
+        async function onFromStoreChanged() {
+            const storeId = document.getElementById('fromStoreId').value;
+            try {
+                const res = await fetch(`/Transfers/GetStoreProducts?storeId=${storeId}`);
+                currentProducts = await res.json();
+                
+                // Clear existing rows
+                document.getElementById('transferTableBody').innerHTML = '';
+                document.getElementById('emptyNotice').style.display = 'block';
+                updateTotals();
+
+                // Add 1 fresh row
+                addNewTransferRow();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function addNewTransferRow() {
+            if (currentProducts.length === 0) {
+                alert('Kho xuất hiện tại không có sản phẩm nào có sẵn tồn kho để chuyển.');
+                return;
+            }
+
+            document.getElementById('emptyNotice').style.display = 'none';
+            rowCounter++;
+            const rowId = `trow_${rowCounter}`;
+
+            let options = '<option value="">-- Chọn sản phẩm --</option>';
+            currentProducts.forEach(p => {
+                options += `<option value="${p.storeProductId}" data-stock="${p.stockQuantity}" data-unit="${p.unit}">${p.productName} (${p.productCode}) - Tồn: ${p.stockQuantity} ${p.unit}</option>`;
+            });
+
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.innerHTML = `
+                <td>
+                    <select class="form-select form-select-sm sp-select" onchange="onSpChanged('${rowId}')" required>
+                        ${options}
+                    </select>
+                </td>
+                <td class="text-center stock-display text-muted fw-medium">
+                    -
+                </td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <input type="number" class="form-control text-center transfer-qty" value="1" min="1" oninput="updateTotals()" required />
+                        <span class="input-group-text unit-display">cái</span>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm p-1 border-0" onclick="removeTransferRow('${rowId}')" title="Xóa">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            document.getElementById('transferTableBody').appendChild(tr);
+        }
+
+        function onSpChanged(rowId) {
+            const row = document.getElementById(rowId);
+            const select = row.querySelector('.sp-select');
+            const selectedOpt = select.selectedOptions[0];
+            const stock = parseInt(selectedOpt.getAttribute('data-stock')) || 0;
+            const unit = selectedOpt.getAttribute('data-unit') || 'cái';
+
+            row.querySelector('.stock-display').textContent = `${stock} ${unit}`;
+            row.querySelector('.unit-display').textContent = unit;
+            row.querySelector('.transfer-qty').max = stock;
+            updateTotals();
+        }
+
+        function removeTransferRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) row.remove();
+
+            const rows = document.querySelectorAll('#transferTableBody tr');
+            if (rows.length === 0) {
+                document.getElementById('emptyNotice').style.display = 'block';
+            }
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const rows = document.querySelectorAll('#transferTableBody tr');
+            let totalQty = 0;
+
+            rows.forEach(r => {
+                const qty = parseInt(r.querySelector('.transfer-qty')?.value) || 0;
+                totalQty += qty;
+            });
+
+            document.getElementById('summaryItemCount').textContent = rows.length;
+            document.getElementById('summaryTotalQty').textContent = totalQty.toLocaleString('vi-VN');
+        }
+
+        async function submitTransfer() {
+            const fromStoreId = parseInt(document.getElementById('fromStoreId').value);
+            const toStoreId = parseInt(document.getElementById('toStoreId').value);
+            const note = document.getElementById('transferNote').value;
+            const completeImmediately = document.getElementById('completeImmediately').checked;
+
+            if (!toStoreId) {
+                alert('Vui lòng chọn chi nhánh nhận hàng.');
+                return;
+            }
+
+            if (fromStoreId === toStoreId) {
+                alert('Chi nhánh xuất và chi nhánh nhận không được trùng nhau.');
+                return;
+            }
+
+            const rows = document.querySelectorAll('#transferTableBody tr');
+            if (rows.length === 0) {
+                alert('Vui lòng thêm ít nhất một sản phẩm cần chuyển.');
+                return;
+            }
+
+            const items = [];
+            for (let r of rows) {
+                const spId = r.querySelector('.sp-select').value;
+                const qty = parseInt(r.querySelector('.transfer-qty').value) || 0;
+                const stock = parseInt(r.querySelector('.sp-select').selectedOptions[0]?.getAttribute('data-stock')) || 0;
+
+                if (!spId) {
+                    alert('Có dòng chưa chọn sản phẩm. Vui lòng kiểm tra lại.');
+                    return;
+                }
+                if (qty <= 0) {
+                    alert('Số lượng chuyển phải lớn hơn 0.');
+                    return;
+                }
+                if (qty > stock) {
+                    alert(`Số lượng chuyển (${qty}) vượt quá số lượng tồn kho hiện có (${stock}).`);
+                    return;
+                }
+
+                items.push({
+                    storeProductId: parseInt(spId),
+                    quantity: qty
+                });
+            }
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+            try {
+                const res = await fetch('/Transfers/Create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        fromStoreId: fromStoreId,
+                        toStoreId: toStoreId,
+                        note: note,
+                        completeImmediately: completeImmediately,
+                        items: items
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = `/Transfers/Details/${data.transferId}`;
+                } else {
+                    alert(data.message || 'Lỗi khi lưu phiếu chuyển kho.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Không thể kết nối đến máy chủ.');
+            }
+        }
+
+        // Khởi tạo dòng đầu tiên
+        if (currentProducts.length > 0) {
+            addNewTransferRow();
+        }
+    </script>
+}
+

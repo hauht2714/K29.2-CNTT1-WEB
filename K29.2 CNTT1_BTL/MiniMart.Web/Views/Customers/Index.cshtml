@@ -1,0 +1,125 @@
+@model IEnumerable<MiniMart.Web.Models.Entities.Customer>
+@{
+    ViewData["Title"] = "Quản lý Khách hàng";
+    var search = ViewBag.Search as string;
+    var tier = ViewBag.Tier as string ?? "ALL";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="fw-bold mb-1">Khách hàng thân thiết</h4>
+        <p class="text-muted small mb-0">Hồ sơ hội viên, tích lũy điểm thưởng và nâng hạng thành viên</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary rounded-3">
+        <i class="bi bi-person-plus me-1"></i> Đăng ký khách hàng
+    </a>
+</div>
+
+<div class="card-custom mb-4">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@search" class="form-control border-start-0" placeholder="Tìm theo họ tên, số điện thoại, mã thẻ..." />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select name="tier" class="form-select" onchange="this.form.submit()">
+                <option value="ALL" selected="@(tier == "ALL")">Tất cả hạng thẻ</option>
+                <option value="MEMBER" selected="@(tier == "MEMBER")">Thành viên</option>
+                <option value="SILVER" selected="@(tier == "SILVER")">Hạng Bạc (Silver)</option>
+                <option value="GOLD" selected="@(tier == "GOLD")">Hạng Vàng (Gold)</option>
+                <option value="DIAMOND" selected="@(tier == "DIAMOND")">Kim Cương (Diamond)</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary w-100">Lọc</button>
+        </div>
+    </form>
+</div>
+
+<div class="card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="small text-muted">
+                    <th class="ps-3">Mã KH</th>
+                    <th>Họ và tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Hạng thẻ</th>
+                    <th>Điểm khả dụng</th>
+                    <th>Tổng tích lũy</th>
+                    <th>Đơn hàng</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end pe-3">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var c in Model)
+                    {
+                        var (tierLabel, tierBadge) = c.MembershipTier switch
+                        {
+                            "DIAMOND" => ("Kim Cương", "bg-primary-subtle text-primary border border-primary-subtle"),
+                            "GOLD" => ("Vàng", "bg-warning-subtle text-warning border border-warning-subtle"),
+                            "SILVER" => ("Bạc", "bg-info-subtle text-info border border-info-subtle"),
+                            _ => ("Thành viên", "bg-light text-dark border")
+                        };
+
+                        <tr>
+                            <td class="ps-3 fw-bold text-primary">@c.MemberCode</td>
+                            <td class="fw-semibold text-dark">
+                                @c.FullName
+                                @if (c.DateOfBirth.HasValue)
+                                {
+                                    <div class="text-muted" style="font-size: 11px;"><i class="bi bi-cake2 me-1"></i>@c.DateOfBirth.Value.ToString("dd/MM/yyyy")</div>
+                                }
+                            </td>
+                            <td><i class="bi bi-telephone text-muted me-1"></i>@c.Phone</td>
+                            <td>
+                                <span class="badge @tierBadge rounded-pill px-2 py-1">@tierLabel</span>
+                            </td>
+                            <td class="fw-bold text-success">@c.TotalPoints.ToString("N0") <span class="small fw-normal">điểm</span></td>
+                            <td class="small text-muted">@c.AccumulatedPoints.ToString("N0") điểm</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">@(c.Invoices?.Count ?? 0) đơn</span>
+                            </td>
+                            <td>
+                                @if (c.Status == "ACTIVE")
+                                {
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">Khóa</span>
+                                }
+                            </td>
+                            <td class="text-end pe-3">
+                                <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary rounded-2 me-1" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="ToggleStatus" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn đổi trạng thái khách hàng @c.FullName?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-warning rounded-2" title="Đổi trạng thái">
+                                        <i class="bi bi-lock"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-people fs-1 d-block mb-2"></i>
+                            Không tìm thấy khách hàng nào.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

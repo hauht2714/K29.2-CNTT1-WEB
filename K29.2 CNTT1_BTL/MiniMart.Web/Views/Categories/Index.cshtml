@@ -1,0 +1,131 @@
+@model IEnumerable<MiniMart.Web.Models.Entities.Category>
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="fw-bold mb-1">Danh mục hàng hóa</h4>
+        <p class="text-muted small mb-0">Phân loại sản phẩm phục vụ bán hàng và quản lý kho</p>
+    </div>
+    <button type="button" class="btn btn-primary rounded-3" data-bs-toggle="modal" data-bs-target="#createCatModal">
+        <i class="bi bi-plus-lg me-1"></i> Thêm danh mục
+    </button>
+</div>
+
+<div class="card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="small text-muted">
+                    <th class="ps-3">ID</th>
+                    <th>Tên danh mục</th>
+                    <th>Mô tả</th>
+                    <th>Số sản phẩm</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end pe-3">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var c in Model)
+                    {
+                        <tr>
+                            <td class="ps-3 text-muted small">#@c.Id</td>
+                            <td class="fw-semibold text-dark">@c.Name</td>
+                            <td class="small text-muted">@(c.Description ?? "---")</td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info rounded-pill px-2 py-1">
+                                    <i class="bi bi-box me-1"></i>@c.Products.Count SP
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">@c.Status</span>
+                            </td>
+                            <td class="text-end pe-3">
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-2 me-1" data-bs-toggle="modal" data-bs-target="#editModal-@c.Id" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+
+                                <!-- Modal Sửa -->
+                                <div class="modal fade" id="editModal-@c.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered text-start">
+                                        <div class="modal-content rounded-4 border-0">
+                                            <form asp-action="Edit" asp-route-id="@c.Id" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <div class="modal-header">
+                                                    <h6 class="modal-title fw-bold">Chỉnh sửa danh mục</h6>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-semibold">Tên danh mục *</label>
+                                                        <input type="text" name="Name" class="form-control" value="@c.Name" required />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-semibold">Mô tả</label>
+                                                        <textarea name="Description" class="form-control" rows="3">@c.Description</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+                            Chưa có danh mục nào.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Thêm Danh mục -->
+<div class="modal fade" id="createCatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold">Thêm danh mục mới</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Tên danh mục *</label>
+                        <input type="text" name="Name" class="form-control" placeholder="Ví dụ: Đồ gia dụng" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Mô tả</label>
+                        <textarea name="Description" class="form-control" rows="3" placeholder="Ghi chú thêm về danh mục..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Thêm danh mục</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

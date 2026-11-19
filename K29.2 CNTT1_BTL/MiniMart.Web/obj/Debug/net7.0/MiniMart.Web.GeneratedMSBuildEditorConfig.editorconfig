@@ -1,0 +1,185 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = MiniMart.Web
+build_property.RootNamespace = MiniMart.Web
+build_property.ProjectDir = /Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web
+build_property._RazorSourceGeneratorDebug = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9BY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Account/ChangePassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9DaGFuZ2VQYXNzd29yZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Categories/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcmllcy9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Customers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ3VzdG9tZXJzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Customers/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ3VzdG9tZXJzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Customers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ3VzdG9tZXJzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Import/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW1wb3J0L0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Import/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW1wb3J0L0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Import/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW1wb3J0L0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Inventory/Batches.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52ZW50b3J5L0JhdGNoZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Inventory/History.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52ZW50b3J5L0hpc3RvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Inventory/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52ZW50b3J5L0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Invoices/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52b2ljZXMvRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Invoices/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52b2ljZXMvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Pos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUG9zL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Products/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdHMvQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Products/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdHMvRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Products/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdHMvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Promotions/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvbW90aW9ucy9DcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Promotions/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvbW90aW9ucy9FZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Promotions/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvbW90aW9ucy9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Reports/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVwb3J0cy9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Stores/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU3RvcmVzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Stores/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU3RvcmVzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Stores/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU3RvcmVzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Suppliers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU3VwcGxpZXJzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Suppliers/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU3VwcGxpZXJzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Suppliers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU3VwcGxpZXJzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Transfers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVHJhbnNmZXJzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Transfers/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVHJhbnNmZXJzL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Transfers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVHJhbnNmZXJzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Users/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlcnMvQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Users/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlcnMvRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlcnMvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/hauhoang/Documents/LT WEB/K29.2 CNTT1_BTL/MiniMart.Web/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-adiavm79ig

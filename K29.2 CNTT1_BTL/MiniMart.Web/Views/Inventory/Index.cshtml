@@ -1,0 +1,380 @@
+@model List<MiniMart.Web.Models.Entities.StoreProduct>
+@{
+    ViewData["Title"] = "Quản lý tồn kho";
+    var isAdmin = User.IsInRole("ADMIN");
+    var stores = ViewBag.Stores as List<MiniMart.Web.Models.Entities.Store> ?? new();
+    var categories = ViewBag.Categories as List<MiniMart.Web.Models.Entities.Category> ?? new();
+    var now = DateTime.Now;
+    var thirtyDays = now.AddDays(30);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="h4 mb-1 text-slate-900 fw-bold">Quản lý tồn kho</h2>
+        <p class="text-muted small mb-0">Theo dõi số lượng hàng hóa thực tế và cảnh báo hạn sử dụng theo lô</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="ExportCsv" 
+           asp-route-storeId="@ViewBag.SelectedStoreId"
+           asp-route-categoryId="@ViewBag.SelectedCategoryId"
+           asp-route-keyword="@ViewBag.Keyword"
+           asp-route-stockFilter="@ViewBag.StockFilter"
+           class="btn btn-outline-success shadow-sm">
+            <i class="bi bi-file-earmark-excel me-1"></i> Xuất Excel (CSV)
+        </a>
+        <a asp-action="History" class="btn btn-outline-secondary">
+            <i class="bi bi-clock-history me-1"></i> Sổ nhật ký kho
+        </a>
+        <a asp-controller="Import" asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-box-arrow-in-down me-1"></i> Nhập hàng mới
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Thống kê nhanh trạng thái kho -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon bg-primary-subtle text-primary me-3">
+                    <i class="bi bi-boxes"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Tổng mặt hàng trong kho</div>
+                    <div class="stat-value">@ViewBag.TotalItems</div>
+                    <div class="small text-muted">Tổng số lượng: <span class="fw-bold text-slate-800">@(((int)(ViewBag.TotalStock ?? 0)).ToString("N0"))</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon bg-warning-subtle text-warning me-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Cảnh báo sắp hết hàng</div>
+                    <div class="stat-value text-warning">@ViewBag.LowStockCount</div>
+                    <div class="small text-muted">Tồn kho ≤ mức tối thiểu</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon bg-danger-subtle text-danger me-3">
+                    <i class="bi bi-x-octagon"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Hết hàng (Tồn = 0)</div>
+                    <div class="stat-value text-danger">@ViewBag.OutOfStockCount</div>
+                    <div class="small text-muted">Cần lên đơn nhập thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon bg-info-subtle text-info me-3">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Hàng cận date (≤30 ngày)</div>
+                    <div class="stat-value text-info">@ViewBag.NearExpiryCount</div>
+                    <div class="small text-muted">Đã hết hạn: <span class="text-danger fw-bold">@ViewBag.ExpiredCount</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bộ lọc tìm kiếm & Lọc nhanh -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            @if (isAdmin)
+            {
+                <div class="col-md-3">
+                    <select name="storeId" class="form-select bg-light" onchange="this.form.submit()">
+                        @foreach (var s in stores)
+                        {
+                            <option value="@s.Id" selected="@(s.Id == ViewBag.SelectedStoreId)">@s.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control bg-light border-start-0" placeholder="Tên sản phẩm, barcode..." />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select name="categoryId" class="form-select bg-light">
+                    <option value="">Tất cả danh mục</option>
+                    @foreach (var c in categories)
+                    {
+                        <option value="@c.Id" selected="@(c.Id == ViewBag.SelectedCategoryId)">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="stockFilter" class="form-select bg-light">
+                    <option value="ALL" selected="@(ViewBag.StockFilter == "ALL")">Tất cả trạng thái</option>
+                    <option value="LOW" selected="@(ViewBag.StockFilter == "LOW")">Sắp hết hàng</option>
+                    <option value="OUT" selected="@(ViewBag.StockFilter == "OUT")">Hết hàng</option>
+                    <option value="EXPIRING" selected="@(ViewBag.StockFilter == "EXPIRING")">Cận date (≤30 ngày)</option>
+                    <option value="EXPIRED" selected="@(ViewBag.StockFilter == "EXPIRED")">Đã hết hạn</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill">
+                    <i class="bi bi-funnel me-1"></i> Lọc
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Đặt lại">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bảng tồn kho -->
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th class="text-end">Đơn giá bán</th>
+                    <th class="text-center">Số lượng tồn</th>
+                    <th>Cảnh báo lô & Hạn dùng</th>
+                    <th class="text-end pe-4">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox display-4 d-block mb-2 text-slate-300"></i>
+                            Không có sản phẩm nào khớp với bộ lọc tồn kho.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var sp in Model)
+                    {
+                        var isLow = sp.StockQuantity <= sp.MinStock && sp.StockQuantity > 0;
+                        var isOut = sp.StockQuantity == 0;
+                        var expiringBatches = sp.ProductBatches
+                            .Where(b => (b.RemainingQuantity ?? 0) > 0 && b.ExpiryDate.HasValue && b.ExpiryDate <= thirtyDays)
+                            .ToList();
+                        var hasExpired = expiringBatches.Any(b => b.ExpiryDate < now);
+
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded-3 p-2 me-3 text-center" style="width: 44px; height: 44px;">
+                                        <i class="bi bi-box text-primary fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-slate-900">@sp.Product.Name</div>
+                                        <div class="small text-muted" style="font-size: 11.5px;">
+                                            Mã: <code>@sp.Product.ProductCode</code>
+                                            @(string.IsNullOrEmpty(sp.Product.Barcode) ? "" : $"· Barcode: {sp.Product.Barcode}")
+                                            · ĐVT: <span class="badge bg-light text-secondary border">@sp.Product.Unit</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    @(sp.Product.Category?.Name ?? "Khác")
+                                </span>
+                            </td>
+                            <td class="text-end fw-medium">
+                                @sp.Price.ToString("N0")đ
+                            </td>
+                            <td class="text-center">
+                                @if (isOut)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 fs-7">
+                                        <i class="bi bi-x-circle me-1"></i> Hết hàng (0)
+                                    </span>
+                                }
+                                else if (isLow)
+                                {
+                                    <div>
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-7">
+                                            <i class="bi bi-exclamation-triangle me-1"></i> Tồn: @sp.StockQuantity
+                                        </span>
+                                        <div class="small text-muted" style="font-size: 11px;">Mức min: @sp.MinStock</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-7">
+                                            @sp.StockQuantity @sp.Product.Unit
+                                        </span>
+                                        <div class="small text-muted" style="font-size: 11px;">Tối đa: @sp.MaxStock</div>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @if (hasExpired)
+                                {
+                                    <span class="badge bg-danger text-white">
+                                        <i class="bi bi-exclamation-octagon me-1"></i> Có lô hết hạn!
+                                    </span>
+                                }
+                                else if (expiringBatches.Any())
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock me-1"></i> @expiringBatches.Count lô cận date (≤30d)
+                                    </span>
+                                }
+                                else if (sp.ProductBatches.Any(b => (b.RemainingQuantity ?? 0) > 0))
+                                {
+                                    <span class="text-success small">
+                                        <i class="bi bi-check-circle me-1"></i> Có @sp.ProductBatches.Count(b => (b.RemainingQuantity ?? 0) > 0) lô còn hạn
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small fst-italic">Chưa có lô chi tiết</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Batches" asp-route-id="@sp.Id" class="btn btn-outline-secondary" title="Xem danh sách lô hàng">
+                                        <i class="bi bi-layers me-1"></i> Xem lô (@sp.ProductBatches.Count)
+                                    </a>
+                                    <button type="button" class="btn btn-outline-primary" 
+                                            onclick="openAdjustModal(@sp.Id, '@Html.Raw(sp.Product.Name)', @sp.StockQuantity, '@sp.Product.Unit')"
+                                            title="Kiểm kê điều chỉnh kho">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Phân trang -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="card-footer bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+            <div class="small text-muted">
+                Trang @ViewBag.CurrentPage / @ViewBag.TotalPages
+            </div>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" 
+                           asp-route-page="@(ViewBag.CurrentPage - 1)"
+                           asp-route-storeId="@ViewBag.SelectedStoreId"
+                           asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                           asp-route-keyword="@ViewBag.Keyword"
+                           asp-route-stockFilter="@ViewBag.StockFilter">Trước</a>
+                    </li>
+                    @for (int p = 1; p <= ViewBag.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" 
+                               asp-route-page="@p"
+                               asp-route-storeId="@ViewBag.SelectedStoreId"
+                               asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                               asp-route-keyword="@ViewBag.Keyword"
+                               asp-route-stockFilter="@ViewBag.StockFilter">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" 
+                           asp-route-page="@(ViewBag.CurrentPage + 1)"
+                           asp-route-storeId="@ViewBag.SelectedStoreId"
+                           asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                           asp-route-keyword="@ViewBag.Keyword"
+                           asp-route-stockFilter="@ViewBag.StockFilter">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+<!-- Modal kiểm kê / điều chỉnh tồn kho -->
+<div class="modal fade" id="adjustModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form asp-action="Adjust" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="storeProductId" id="adjustStoreProductId" />
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold"><i class="bi bi-sliders me-2 text-primary"></i>Kiểm kê & Điều chỉnh tồn kho</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 bg-light rounded-3 mb-3">
+                        <div class="fw-bold" id="adjustProductName">Tên sản phẩm</div>
+                        <div class="small text-muted">Số lượng tồn hiện tại trên máy: <strong id="adjustCurrentStock">0</strong> <span id="adjustUnit">cái</span></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Số lượng thực tế đếm được <span class="text-danger">*</span></label>
+                        <input type="number" name="newQuantity" id="adjustNewQuantity" class="form-control" min="0" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Lý do điều chỉnh kiểm kê <span class="text-danger">*</span></label>
+                        <textarea name="reason" rows="3" class="form-control" placeholder="Ví dụ: Kiểm kê định kỳ cuối tháng phát hiện hao hụt / thất thoát..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-check-lg me-1"></i> Lưu điều chỉnh
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openAdjustModal(id, name, currentStock, unit) {
+            document.getElementById('adjustStoreProductId').value = id;
+            document.getElementById('adjustProductName').textContent = name;
+            document.getElementById('adjustCurrentStock').textContent = currentStock;
+            document.getElementById('adjustUnit').textContent = unit;
+            document.getElementById('adjustNewQuantity').value = currentStock;
+
+            const modal = new bootstrap.Modal(document.getElementById('adjustModal'));
+            modal.show();
+        }
+    </script>
+}
+

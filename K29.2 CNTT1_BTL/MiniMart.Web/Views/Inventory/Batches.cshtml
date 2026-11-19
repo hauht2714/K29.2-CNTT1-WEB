@@ -1,0 +1,126 @@
+@model MiniMart.Web.Models.Entities.StoreProduct
+@{
+    ViewData["Title"] = "Chi tiết lô hàng - " + Model.Product.Name;
+    var now = DateTime.Now;
+    var thirtyDays = now.AddDays(30);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại danh sách kho">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="h4 mb-0 text-slate-900 fw-bold">Chi tiết lô hàng: @Model.Product.Name</h2>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                    @Model.Store.Name
+                </span>
+            </div>
+            <p class="text-muted small mb-0">Mã sản phẩm: <code>@Model.Product.ProductCode</code> · Tổng tồn kho: <strong class="text-primary">@Model.StockQuantity @Model.Product.Unit</strong></p>
+        </div>
+    </div>
+    <div>
+        <a asp-controller="Import" asp-action="Create" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Nhập lô hàng mới
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Mã lô (Barcode)</th>
+                    <th>Ngày nhập</th>
+                    <th>Hạn sử dụng</th>
+                    <th class="text-end">Giá nhập</th>
+                    <th class="text-center">Số lượng nhập</th>
+                    <th class="text-center">Còn lại</th>
+                    <th class="text-center">Trạng thái hạn</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ProductBatches == null || !Model.ProductBatches.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-box-seam display-4 d-block mb-2 text-slate-300"></i>
+                            Sản phẩm này chưa được chia lô chi tiết (sử dụng quản lý tổng tồn kho).
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var b in Model.ProductBatches.OrderBy(b => b.ExpiryDate ?? DateTime.MaxValue))
+                    {
+                        var isExpired = b.ExpiryDate.HasValue && b.ExpiryDate.Value < now && (b.RemainingQuantity ?? 0) > 0;
+                        var isExpiring = b.ExpiryDate.HasValue && b.ExpiryDate.Value <= thirtyDays && b.ExpiryDate.Value >= now && (b.RemainingQuantity ?? 0) > 0;
+                        var isSoldOut = (b.RemainingQuantity ?? 0) == 0;
+
+                        <tr class="@(isExpired ? "table-danger" : (isExpiring ? "table-warning" : ""))">
+                            <td class="ps-4">
+                                <div class="fw-bold font-monospace">@(b.BatchBarcode ?? "LÔ-" + b.Id.ToString("D6"))</div>
+                                <div class="small text-muted" style="font-size: 11px;">ID: #@b.Id</div>
+                            </td>
+                            <td>
+                                @(b.ImportDate?.ToString("dd/MM/yyyy") ?? "N/A")
+                            </td>
+                            <td>
+                                @if (b.ExpiryDate.HasValue)
+                                {
+                                    <div class="fw-medium">@b.ExpiryDate.Value.ToString("dd/MM/yyyy")</div>
+                                    <div class="small text-muted" style="font-size: 11px;">
+                                        @(isExpired ? "Đã quá hạn " + (int)(now - b.ExpiryDate.Value).TotalDays + " ngày" 
+                                                    : "Còn " + (int)(b.ExpiryDate.Value - now).TotalDays + " ngày")
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Không áp dụng</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @(b.ImportPrice?.ToString("N0") ?? "0")đ
+                            </td>
+                            <td class="text-center">
+                                @(b.Quantity ?? 0)
+                            </td>
+                            <td class="text-center">
+                                <span class="badge @(isSoldOut ? "bg-secondary" : "bg-primary") px-2 py-1 fs-7">
+                                    @(b.RemainingQuantity ?? 0)
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                @if (isSoldOut)
+                                {
+                                    <span class="badge bg-light text-secondary border">Đã xuất hết</span>
+                                }
+                                else if (isExpired)
+                                {
+                                    <span class="badge bg-danger text-white">
+                                        <i class="bi bi-x-octagon me-1"></i> ĐÃ HẾT HẠN
+                                    </span>
+                                }
+                                else if (isExpiring)
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock me-1"></i> Cận date
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle me-1"></i> Tốt
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

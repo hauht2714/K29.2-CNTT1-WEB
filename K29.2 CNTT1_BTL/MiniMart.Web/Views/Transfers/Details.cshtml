@@ -1,0 +1,155 @@
+@model MiniMart.Web.Models.Entities.StockTransfer
+@{
+    ViewData["Title"] = "Chi tiết chuyển kho #" + Model.TransferCode;
+    var canReceive = Model.Status == "IN_TRANSIT";
+    var canCancel = Model.Status == "IN_TRANSIT";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="h4 mb-0 text-slate-900 fw-bold">Phiếu chuyển kho #@Model.TransferCode</h2>
+                @if (Model.Status == "COMPLETED")
+                {
+                    <span class="badge bg-success-subtle text-success border border-success-subtle fs-7">
+                        <i class="bi bi-check-circle me-1"></i> Hoàn thành
+                    </span>
+                }
+                else if (Model.Status == "IN_TRANSIT")
+                {
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle fs-7">
+                        <i class="bi bi-truck me-1"></i> Đang vận chuyển
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-7">
+                        <i class="bi bi-x-circle me-1"></i> Đã hủy
+                    </span>
+                }
+            </div>
+            <p class="text-muted small mb-0">Thời gian tạo: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In phiếu
+        </button>
+        @if (canReceive)
+        {
+            <form asp-action="Receive" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-success" onclick="return confirm('Xác nhận đã nhận đủ hàng và cộng vào tồn kho chi nhánh đích?');">
+                    <i class="bi bi-check2-circle me-1"></i> Xác nhận nhận hàng
+                </button>
+            </form>
+        }
+        @if (canCancel)
+        {
+            <form asp-action="Cancel" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Bạn có chắc chắn muốn hủy phiếu này? Hàng hóa sẽ được hoàn trả về kho xuất.');">
+                    <i class="bi bi-x-circle me-1"></i> Hủy phiếu chuyển
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="p-3 bg-danger-subtle text-danger rounded-3 me-3 fs-3">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div>
+                    <div class="small text-muted">Chi nhánh xuất hàng</div>
+                    <div class="fw-bold fs-5 text-slate-900">@Model.FromStore?.Name</div>
+                    <div class="small text-muted">@Model.FromStore?.Address</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="p-3 bg-success-subtle text-success rounded-3 me-3 fs-3">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div>
+                    <div class="small text-muted">Chi nhánh nhận hàng</div>
+                    <div class="fw-bold fs-5 text-slate-900">@Model.ToStore?.Name</div>
+                    <div class="small text-muted">@Model.ToStore?.Address</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-box-seam me-2 text-primary"></i>Danh sách mặt hàng luân chuyển</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Sản phẩm</th>
+                    <th>Mã sản phẩm</th>
+                    <th>Đơn vị tính</th>
+                    <th class="text-center pe-4">Số lượng điều chuyển</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.StockTransferItems)
+                {
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold text-slate-900">@(item.StoreProduct?.Product?.Name ?? "Sản phẩm")</div>
+                        </td>
+                        <td>
+                            <code>@(item.StoreProduct?.Product?.ProductCode ?? "N/A")</code>
+                        </td>
+                        <td>
+                            @(item.StoreProduct?.Product?.Unit ?? "cái")
+                        </td>
+                        <td class="text-center pe-4">
+                            <span class="badge bg-primary px-3 py-2 fs-6">
+                                @(item.Quantity ?? 0)
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Note))
+    {
+        <div class="card-footer bg-light border-top p-3 small text-muted">
+            <strong>Ghi chú:</strong> @Model.Note
+        </div>
+    }
+</div>
+

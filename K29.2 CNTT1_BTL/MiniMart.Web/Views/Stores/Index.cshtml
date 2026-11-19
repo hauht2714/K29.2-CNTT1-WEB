@@ -1,0 +1,121 @@
+@model IEnumerable<MiniMart.Web.Models.Entities.Store>
+@{
+    ViewData["Title"] = "Quản lý Chi nhánh";
+    var search = ViewBag.Search as string;
+    var status = ViewBag.Status as string ?? "ALL";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="fw-bold mb-1">Hệ thống chi nhánh</h4>
+        <p class="text-muted small mb-0">Quản lý danh sách chuỗi cửa hàng và siêu thị mini</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary rounded-3">
+        <i class="bi bi-plus-lg me-1"></i> Thêm chi nhánh
+    </a>
+</div>
+
+<div class="card-custom mb-4">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@search" class="form-control border-start-0" placeholder="Tìm theo tên, mã CN, số điện thoại..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select" onchange="this.form.submit()">
+                <option value="ALL" selected="@(status == "ALL")">Tất cả trạng thái</option>
+                <option value="ACTIVE" selected="@(status == "ACTIVE")">Đang hoạt động</option>
+                <option value="INACTIVE" selected="@(status == "INACTIVE")">Ngừng hoạt động</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary w-100">Lọc</button>
+        </div>
+    </form>
+</div>
+
+<div class="card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="small text-muted">
+                    <th class="ps-3">Mã CN</th>
+                    <th>Tên chi nhánh</th>
+                    <th>Loại hình</th>
+                    <th>Liên hệ</th>
+                    <th>Địa chỉ</th>
+                    <th>Nhân sự</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end pe-3">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var s in Model)
+                    {
+                        var typeLabel = s.StoreType switch
+                        {
+                            "MINI_MART" => "Siêu thị mini",
+                            "DISTRIBUTOR" => "Cửa hàng phân phối",
+                            "AGENCY" => "Đại lý",
+                            _ => s.StoreType
+                        };
+
+                        <tr>
+                            <td class="ps-3 fw-bold text-primary">@s.StoreCode</td>
+                            <td class="fw-semibold">@s.Name</td>
+                            <td><span class="badge bg-light text-dark border">@typeLabel</span></td>
+                            <td class="small">
+                                <div><i class="bi bi-telephone text-muted me-1"></i>@(s.Phone ?? "---")</div>
+                                @if (!string.IsNullOrEmpty(s.Email))
+                                {
+                                    <div class="text-muted"><i class="bi bi-envelope me-1"></i>@s.Email</div>
+                                }
+                            </td>
+                            <td class="small text-muted" style="max-width: 250px;">@s.Address</td>
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                    <i class="bi bi-people me-1"></i>@(s.Users?.Count ?? 0) nhân viên
+                                </span>
+                            </td>
+                            <td>
+                                @if (s.Status == "ACTIVE")
+                                {
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">Ngừng</span>
+                                }
+                            </td>
+                            <td class="text-end pe-3">
+                                <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary rounded-2 me-1" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="ToggleStatus" asp-route-id="@s.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn đổi trạng thái chi nhánh này?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-warning rounded-2" title="Đổi trạng thái">
+                                        <i class="bi bi-power"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-shop fs-1 d-block mb-2"></i>
+                            Không tìm thấy chi nhánh nào phù hợp.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

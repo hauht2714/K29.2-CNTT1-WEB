@@ -1,0 +1,256 @@
+@model MiniMart.Web.Models.Entities.Invoice
+@{
+    ViewData["Title"] = "Chi tiết hóa đơn #" + Model.InvoiceCode;
+    var canCancel = (User.IsInRole("ADMIN") || User.IsInRole("STORE_MANAGER")) && Model.Status == "COMPLETED";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Quay lại">
+            <i class="bi bi-arrow-left fs-6"></i>
+        </a>
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="h4 mb-0 text-slate-900 fw-bold">Hóa đơn #@Model.InvoiceCode</h2>
+                @if (Model.Status == "COMPLETED")
+                {
+                    <span class="badge bg-success-subtle text-success border border-success-subtle fs-7">
+                        <i class="bi bi-check-circle me-1"></i> Hoàn thành
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-7">
+                        <i class="bi bi-x-circle me-1"></i> Đã hủy
+                    </span>
+                }
+            </div>
+            <p class="text-muted small mb-0">Thời gian tạo: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In hóa đơn
+        </button>
+        @if (canCancel)
+        {
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                <i class="bi bi-x-octagon me-1"></i> Hủy hóa đơn
+            </button>
+        }
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model.Status == "CANCELLED")
+{
+    <div class="alert alert-danger border-0 shadow-sm mb-4">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-exclamation-octagon-fill fs-4 me-3 mt-1"></i>
+            <div>
+                <h6 class="fw-bold mb-1">Hóa đơn đã bị hủy</h6>
+                <p class="mb-0 small"><strong>Lý do hủy:</strong> @Model.CancelReason</p>
+                <div class="small text-muted mt-1">Toàn bộ hàng hóa và điểm thưởng đã được hoàn trả về kho và tài khoản khách.</div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Cột trái: Chi tiết sản phẩm & Lô hàng đã xuất -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-cart-check me-2 text-primary"></i>Danh sách sản phẩm mua</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Sản phẩm</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-end pe-4">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.InvoiceItems)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-medium text-slate-900">@item.ProductName</div>
+                                    <div class="small text-muted">Mã: @(item.Product?.ProductCode ?? "N/A") · ĐVT: @(item.Product?.Unit ?? "cái")</div>
+                                    @if (item.InvoiceItemBatches.Any())
+                                    {
+                                        <div class="mt-1 d-flex flex-wrap gap-1">
+                                            @foreach (var b in item.InvoiceItemBatches)
+                                            {
+                                                <span class="badge bg-light text-secondary border" style="font-size: 10.5px;">
+                                                    <i class="bi bi-box me-1"></i>Lô: @(b.Batch?.BatchBarcode ?? "Lô mặc định") (x@(b.Quantity))
+                                                    @(b.Batch?.ExpiryDate.HasValue == true ? $"· HSD: {b.Batch.ExpiryDate.Value:dd/MM/yyyy}" : "")
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-center fw-bold">@item.Quantity</td>
+                                <td class="text-end text-muted">@item.UnitPrice.ToString("N0")đ</td>
+                                <td class="text-end pe-4 fw-bold text-slate-900">@item.Subtotal.ToString("N0")đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Thông tin thanh toán, Khách hàng, Cửa hàng -->
+    <div class="col-lg-4">
+        <!-- Thông tin thanh toán -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-cash-stack me-2 text-success"></i>Thông tin thanh toán</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Tổng tiền hàng:</span>
+                    <span class="fw-medium">@Model.Subtotal.ToString("N0")đ</span>
+                </div>
+                @if (Model.DiscountAmount > 0)
+                {
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Giảm giá khuyến mãi:</span>
+                        <span class="fw-medium">-@Model.DiscountAmount.ToString("N0")đ</span>
+                    </div>
+                }
+                @if (Model.PointsDiscount > 0)
+                {
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Chiết khấu điểm:</span>
+                        <span class="fw-medium">-@Model.PointsDiscount.ToString("N0")đ</span>
+                    </div>
+                }
+                <hr class="my-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold text-slate-900 fs-6">Khách phải trả:</span>
+                    <span class="fw-bold text-primary fs-5">@Model.TotalAmount.ToString("N0")đ</span>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">Phương thức:</span>
+                        <span class="fw-bold">
+                            @(Model.PaymentMethod switch
+                            {
+                                "CASH" => "Tiền mặt",
+                                "CARD" => "Thẻ ngân hàng",
+                                "TRANSFER" => "QR Chuyển khoản",
+                                _ => Model.PaymentMethod
+                            })
+                        </span>
+                    </div>
+                    @if (Model.PaymentMethod == "CASH")
+                    {
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Tiền khách đưa:</span>
+                            <span>@((Model.CashReceived ?? Model.TotalAmount).ToString("N0"))đ</span>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">Tiền trả lại:</span>
+                            <span class="text-success fw-bold">@((Model.CashChange ?? 0).ToString("N0"))đ</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin liên quan -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-slate-800"><i class="bi bi-info-circle me-2 text-info"></i>Thông tin liên quan</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="small text-muted mb-1">Khách hàng:</div>
+                    @if (Model.Customer != null)
+                    {
+                        <div class="fw-bold">@Model.Customer.FullName</div>
+                        <div class="small text-muted">SĐT: @Model.Customer.Phone</div>
+                        <div class="small text-muted">Hạng thẻ: <span class="badge bg-secondary-subtle text-secondary">@Model.Customer.MembershipTier</span> · Điểm hiện có: @Model.Customer.TotalPoints</div>
+                    }
+                    else
+                    {
+                        <div class="text-muted fst-italic">Khách hàng vãng lai (Khách lẻ)</div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <div class="small text-muted mb-1">Thu ngân bán hàng:</div>
+                    <div class="fw-medium">@Model.Cashier?.FullName</div>
+                    <div class="small text-muted">@@@Model.Cashier?.Username</div>
+                </div>
+
+                <div>
+                    <div class="small text-muted mb-1">Chi nhánh:</div>
+                    <div class="fw-medium">@Model.Store?.Name</div>
+                    <div class="small text-muted">@Model.Store?.Address</div>
+                    @if (!string.IsNullOrEmpty(Model.Store?.Phone))
+                    {
+                        <div class="small text-muted">Hotline: @Model.Store?.Phone</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận hủy hóa đơn -->
+@if (canCancel)
+{
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <form asp-action="Cancel" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="modal-header border-0 pb-0">
+                        <h6 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận hủy hóa đơn #@Model.InvoiceCode</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="small text-muted mb-3">
+                            Khi hủy hóa đơn, hệ thống sẽ tự động:
+                            <br>• Hoàn trả số lượng các mặt hàng về tồn kho chi nhánh và lô hàng tương ứng.
+                            <br>• Ghi nhật ký xuất nhập tồn loại <code>RETURN</code>.
+                            <br>• Thu hồi điểm thưởng tích lũy hoặc trả lại điểm chiết khấu cho khách hàng.
+                        </p>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Lý do hủy hóa đơn <span class="text-danger">*</span></label>
+                            <textarea name="cancelReason" rows="3" class="form-control" placeholder="Nhập chi tiết lý do (Khách trả hàng, bấm nhầm món, sai giá...)" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash me-1"></i> Đồng ý hủy hóa đơn
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
