@@ -177,6 +177,28 @@ namespace MiniMart.Web.Controllers
                 return Json(new { success = false, message = "Không tìm thấy nhà cung cấp đã chọn." });
             }
 
+            if (!await _context.Stores.AnyAsync(s => s.Id == targetStoreId))
+            {
+                return Json(new { success = false, message = "Không tìm thấy chi nhánh nhận hàng." });
+            }
+
+            if (model.Items.Any(i => i.Quantity < 1 || i.Quantity > 100000))
+            {
+                return Json(new { success = false, message = "Số lượng nhập của mỗi sản phẩm phải từ 1 đến 100.000." });
+            }
+
+            if (model.Items.Any(i => i.ImportPrice < 0 || i.ImportPrice > 1000000000))
+            {
+                return Json(new { success = false, message = "Giá nhập không hợp lệ (phải từ 0 trở lên)." });
+            }
+
+            var requestedProductIds = model.Items.Select(i => i.ProductId).Distinct().ToList();
+            var existingProductCount = await _context.Products.CountAsync(p => requestedProductIds.Contains(p.Id));
+            if (existingProductCount != requestedProductIds.Count)
+            {
+                return Json(new { success = false, message = "Có sản phẩm trong phiếu không tồn tại. Vui lòng tải lại trang và chọn lại." });
+            }
+
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -250,7 +272,7 @@ namespace MiniMart.Web.Controllers
                         }
 
                         // Tạo lô hàng mới (ProductBatch)
-                        var batchBarcode = "BAT" + DateTime.Now.ToString("yyMMdd") + (DateTime.Now.Ticks % 100000).ToString("D5");
+                        var batchBarcode = StockBatchHelper.NewBatchBarcode();
                         var batch = new ProductBatch
                         {
                             StoreProductId = sp.Id,
@@ -368,7 +390,7 @@ namespace MiniMart.Web.Controllers
                         sp.UpdatedAt = DateTime.Now;
                     }
 
-                    var batchBarcode = "BAT" + DateTime.Now.ToString("yyMMdd") + (DateTime.Now.Ticks % 100000).ToString("D5");
+                    var batchBarcode = StockBatchHelper.NewBatchBarcode();
                     _context.ProductBatches.Add(new ProductBatch
                     {
                         StoreProductId = sp.Id,

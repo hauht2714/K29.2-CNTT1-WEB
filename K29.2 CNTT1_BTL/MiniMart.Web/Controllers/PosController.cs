@@ -15,6 +15,11 @@ namespace MiniMart.Web.Controllers
     [Authorize(Roles = "ADMIN,STORE_MANAGER,CASHIER")]
     public class PosController : Controller
     {
+        private const decimal PointValue = 1000m;          // 1 điểm = 1.000đ khi tiêu
+        private const decimal MoneyPerEarnedPoint = 10000m; // 10.000đ thực trả = 1 điểm tích lũy
+        private const int MaxQuantityPerLine = 100000;
+        private static readonly string[] AllowedPaymentMethods = { "CASH", "BANK_TRANSFER", "E_WALLET", "CARD", "TRANSFER" };
+
         private readonly MiniMartDbContext _context;
 
         public PosController(MiniMartDbContext context)
@@ -61,44 +66,13 @@ namespace MiniMart.Web.Controllers
             }
 
             var list = await query.Take(40).ToListAsync();
-
-            var now = DateTime.Now;
-            var activePromos = await _context.Promotions
-                .Include(pr => pr.PromotionItems)
-                .Where(pr => pr.IsActive && pr.StartDate <= now && pr.EndDate >= now)
-                .ToListAsync();
+            var activePromos = await GetActivePromotionsAsync();
 
             var result = list.Select(p =>
             {
-                var sp = p.StoreProducts.FirstOrDefault(s => s.StoreId == storeId) 
-                         ?? p.StoreProducts.FirstOrDefault();
-                decimal basePrice = sp?.Price ?? p.DefaultPrice ?? 0;
-                decimal finalPrice = basePrice;
-                string promoTag = "";
-
-                var promoItem = activePromos
-                    .SelectMany(pr => pr.PromotionItems.Select(pi => new { Promo = pr, Item = pi }))
-                    .FirstOrDefault(x => x.Item.ProductId == p.Id);
-
-                if (promoItem != null)
-                {
-                    if (promoItem.Promo.PromoType == "PERCENTAGE" && promoItem.Item.DiscountPercent.HasValue)
-                    {
-                        var pct = promoItem.Item.DiscountPercent.Value;
-                        finalPrice = Math.Max(0, basePrice * (1 - (decimal)pct / 100m));
-                        promoTag = $"-{pct}%";
-                    }
-                    else if (promoItem.Promo.PromoType == "FIXED_AMOUNT" && promoItem.Item.DiscountAmount.HasValue)
-                    {
-                        var amt = promoItem.Item.DiscountAmount.Value;
-                        finalPrice = Math.Max(0, basePrice - amt);
-                        promoTag = $"-{amt:N0}đ";
-                    }
-                    else if (promoItem.Promo.PromoType == "BUY_X_GET_Y")
-                    {
-                        promoTag = $"Mua {promoItem.Item.BuyQty} tặng {promoItem.Item.GetQty}";
-                    }
-                }
+                // Chỉ hiển thị tồn kho của chi nhánh hiện tại
+                var sp = p.StoreProducts.FirstOrDefault(s => s.StoreId == storeId);
+                var price = CalculatePrice(p, sp, activePromos);
 
                 return new
                 {
@@ -108,9 +82,11 @@ namespace MiniMart.Web.Controllers
                     name = p.Name,
                     barcode = p.Barcode ?? "",
                     unit = p.Unit,
-                    originalPrice = basePrice,
-                    price = finalPrice,
-                    promoTag = promoTag,
+                    originalPrice = price.BasePrice,
+                    price = price.UnitPrice,
+                    promoTag = price.PromoTag,
+                    buyQty = price.BuyQty,
+                    getQty = price.GetQty,
                     stockQuantity = sp?.StockQuantity ?? 0,
                     imageUrl = p.ImageUrl
                 };
@@ -152,6 +128,7 @@ namespace MiniMart.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Checkout([FromBody] CheckoutRequestDto req)
         {
             if (req == null || req.Items == null || !req.Items.Any())
@@ -159,39 +136,97 @@ namespace MiniMart.Web.Controllers
                 return Json(new { success = false, message = "Giỏ hàng đang trống." });
             }
 
+            var paymentMethod = (req.PaymentMethod ?? "").Trim().ToUpper();
+            if (!AllowedPaymentMethods.Contains(paymentMethod))
+            {
+                return Json(new { success = false, message = "Phương thức thanh toán không hợp lệ." });
+            }
+
+            if (req.Items.Any(i => i.Quantity <= 0 || i.Quantity > MaxQuantityPerLine))
+            {
+                return Json(new { success = false, message = "Số lượng sản phẩm phải lớn hơn 0." });
+            }
+
+            // Gộp các dòng trùng sản phẩm
+            var requestedLines = req.Items
+                .GroupBy(i => i.ProductId)
+                .Select(g => new { ProductId = g.Key, Quantity = g.Sum(x => x.Quantity) })
+                .ToList();
+
             var storeId = GetCurrentStoreId();
             var cashierId = GetCurrentUserId();
 
-            var store = await _context.Stores.FindAsync(storeId) ?? await _context.Stores.FirstOrDefaultAsync();
+            var store = await _context.Stores.FindAsync(storeId);
+            if (store == null)
+            {
+                return Json(new { success = false, message = "Tài khoản chưa được gán chi nhánh hợp lệ để bán hàng." });
+            }
             var cashier = await _context.Users.FindAsync(cashierId);
 
             Customer? customer = null;
             if (req.CustomerId.HasValue)
             {
-                customer = await _context.Customers.FindAsync(req.CustomerId.Value);
+                customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == req.CustomerId.Value && c.Status == "ACTIVE");
+                if (customer == null)
+                {
+                    return Json(new { success = false, message = "Khách hàng không tồn tại hoặc đã bị khóa." });
+                }
             }
 
-            // Tính toán tiền
-            decimal subtotal = req.Items.Sum(i => i.UnitPrice * i.Quantity);
-            decimal discount = Math.Max(0, req.DiscountAmount);
+            // Giá bán luôn lấy từ CSDL, không tin giá do trình duyệt gửi lên
+            var productIds = requestedLines.Select(l => l.ProductId).ToList();
+            var products = await _context.Products
+                .Where(p => productIds.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id);
+            var storeProducts = await _context.StoreProducts
+                .Where(s => s.StoreId == store.Id && productIds.Contains(s.ProductId))
+                .ToDictionaryAsync(s => s.ProductId);
+            var activePromos = await GetActivePromotionsAsync();
 
+            var lines = new List<(Product Product, StoreProduct Sp, int Quantity, int FreeQty, decimal UnitPrice, decimal LineDiscount, decimal LineTotal)>();
+            foreach (var line in requestedLines)
+            {
+                if (!products.TryGetValue(line.ProductId, out var product) || product.Status != "ACTIVE")
+                {
+                    return Json(new { success = false, message = $"Sản phẩm mã #{line.ProductId} không tồn tại hoặc đã ngừng kinh doanh." });
+                }
+
+                if (!storeProducts.TryGetValue(line.ProductId, out var sp) || sp.StockQuantity < line.Quantity)
+                {
+                    return Json(new { success = false, message = $"Sản phẩm '{product.Name}' không đủ tồn kho để bán (còn {sp?.StockQuantity ?? 0})." });
+                }
+
+                var price = CalculatePrice(product, sp, activePromos);
+                int freeQty = 0;
+                if (price.BuyQty > 0 && price.GetQty > 0)
+                {
+                    freeQty = line.Quantity / (price.BuyQty + price.GetQty) * price.GetQty;
+                }
+
+                decimal lineDiscount = freeQty * price.UnitPrice;
+                decimal lineTotal = price.UnitPrice * line.Quantity - lineDiscount;
+                lines.Add((product, sp, line.Quantity, freeQty, price.UnitPrice, lineDiscount, lineTotal));
+            }
+
+            decimal subtotal = lines.Sum(l => l.LineTotal);
+
+            // Điểm dùng không vượt quá điểm khách có và không vượt quá giá trị đơn hàng
             int pointsToUse = 0;
-            decimal pointsDiscount = 0;
-
             if (customer != null && req.PointsToRedeem > 0)
             {
-                pointsToUse = Math.Min(req.PointsToRedeem, customer.TotalPoints);
-                pointsDiscount = pointsToUse * 1000m;
+                int maxPointsByAmount = (int)Math.Floor(subtotal / PointValue);
+                pointsToUse = Math.Min(req.PointsToRedeem, Math.Min(customer.TotalPoints, maxPointsByAmount));
+                pointsToUse = Math.Max(0, pointsToUse);
             }
+            decimal pointsDiscount = pointsToUse * PointValue;
+            decimal totalAmount = Math.Max(0, subtotal - pointsDiscount);
 
-            decimal totalAmount = Math.Max(0, subtotal - discount - pointsDiscount);
-
-            if (req.PaymentMethod == "CASH" && req.CashReceived < totalAmount)
+            if (paymentMethod == "CASH" && req.CashReceived < totalAmount)
             {
-                return Json(new { success = false, message = "Tiền khách đưa chưa đủ để thanh toán." });
+                return Json(new { success = false, message = $"Tiền khách đưa chưa đủ để thanh toán (cần {totalAmount:N0}đ)." });
             }
 
-            decimal cashChange = req.PaymentMethod == "CASH" ? Math.Max(0, req.CashReceived - totalAmount) : 0;
+            decimal cashChange = paymentMethod == "CASH" ? Math.Max(0, req.CashReceived - totalAmount) : 0;
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -201,15 +236,15 @@ namespace MiniMart.Web.Controllers
                 var invoice = new Invoice
                 {
                     InvoiceCode = invoiceCode,
-                    StoreId = store?.Id ?? 1,
+                    StoreId = store.Id,
                     CustomerId = customer?.Id,
-                    CashierId = cashier?.Id ?? 1,
+                    CashierId = cashier?.Id ?? cashierId,
                     Subtotal = subtotal,
-                    DiscountAmount = discount,
+                    DiscountAmount = 0,
                     PointsDiscount = pointsDiscount,
                     TotalAmount = totalAmount,
-                    PaymentMethod = req.PaymentMethod,
-                    CashReceived = req.PaymentMethod == "CASH" ? req.CashReceived : totalAmount,
+                    PaymentMethod = paymentMethod,
+                    CashReceived = paymentMethod == "CASH" ? req.CashReceived : totalAmount,
                     CashChange = cashChange,
                     Status = "COMPLETED",
                     CreatedAt = DateTime.Now,
@@ -221,70 +256,44 @@ namespace MiniMart.Web.Controllers
 
                 var receiptItems = new List<ReceiptItemDto>();
 
-                // 2. Xử lý từng món hàng và trừ kho FIFO
-                foreach (var item in req.Items)
+                // 2. Xử lý từng món hàng và trừ kho theo lô (hết hạn trước xuất trước)
+                foreach (var line in lines)
                 {
-                    var sp = await _context.StoreProducts
-                        .FirstOrDefaultAsync(s => s.StoreId == invoice.StoreId && s.ProductId == item.ProductId);
-
-                    if (sp == null || sp.StockQuantity < item.Quantity)
-                    {
-                        await transaction.RollbackAsync();
-                        return Json(new { success = false, message = $"Sản phẩm '{item.ProductName}' không đủ tồn kho để bán." });
-                    }
-
-                    // Trừ tồn kho StoreProduct
-                    sp.StockQuantity -= item.Quantity;
+                    var sp = line.Sp;
+                    sp.StockQuantity -= line.Quantity;
                     sp.UpdatedAt = DateTime.Now;
 
-                    // Tạo InvoiceItem
                     var invItem = new InvoiceItem
                     {
                         InvoiceId = invoice.Id,
-                        ProductId = item.ProductId,
-                        ProductName = item.ProductName,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice,
-                        Discount = 0,
-                        Subtotal = item.UnitPrice * item.Quantity,
+                        ProductId = line.Product.Id,
+                        ProductName = line.Product.Name,
+                        Quantity = line.Quantity,
+                        UnitPrice = line.UnitPrice,
+                        Discount = line.LineDiscount,
+                        Subtotal = line.LineTotal,
                         StoreProductId = sp.Id
                     };
                     _context.InvoiceItems.Add(invItem);
                     await _context.SaveChangesAsync();
 
-                    // Trừ lô hàng theo FIFO (ProductBatches)
-                    var batches = await _context.ProductBatches
-                        .Where(b => b.StoreProductId == sp.Id && b.RemainingQuantity > 0)
-                        .OrderBy(b => b.ExpiryDate ?? DateTime.MaxValue)
-                        .ToListAsync();
-
-                    int needed = item.Quantity;
-                    foreach (var batch in batches)
+                    var deducted = await StockBatchHelper.DeductAsync(_context, sp.Id, line.Quantity);
+                    foreach (var (batch, qty) in deducted)
                     {
-                        if (needed <= 0) break;
-
-                        int available = batch.RemainingQuantity ?? 0;
-                        int deduct = Math.Min(available, needed);
-
-                        batch.RemainingQuantity = available - deduct;
-                        needed -= deduct;
-
-                        // Lưu vết xuất lô
                         _context.InvoiceItemBatches.Add(new InvoiceItemBatch
                         {
                             InvoiceItemId = invItem.Id,
                             BatchId = batch.Id,
-                            Quantity = deduct
+                            Quantity = qty
                         });
                     }
 
-                    // Ghi nhận biến động kho
                     _context.InventoryTransactions.Add(new InventoryTransaction
                     {
                         StoreId = invoice.StoreId,
-                        ProductId = item.ProductId,
+                        ProductId = line.Product.Id,
                         Type = "SALE",
-                        Quantity = -item.Quantity,
+                        Quantity = -line.Quantity,
                         ReferenceId = invoice.Id,
                         Note = $"Bán hàng HĐ {invoice.InvoiceCode}",
                         CreatedAt = DateTime.Now
@@ -292,10 +301,11 @@ namespace MiniMart.Web.Controllers
 
                     receiptItems.Add(new ReceiptItemDto
                     {
-                        ProductName = item.ProductName,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice,
-                        Subtotal = item.UnitPrice * item.Quantity
+                        ProductName = line.FreeQty > 0 ? $"{line.Product.Name} (tặng {line.FreeQty})" : line.Product.Name,
+                        Unit = line.Product.Unit,
+                        Quantity = line.Quantity,
+                        UnitPrice = line.UnitPrice,
+                        Subtotal = line.LineTotal
                     });
                 }
 
@@ -305,19 +315,16 @@ namespace MiniMart.Web.Controllers
 
                 if (customer != null)
                 {
-                    // Trừ điểm đã dùng
                     if (pointsToUse > 0)
                     {
                         customer.TotalPoints -= pointsToUse;
                     }
 
-                    // Tích điểm mới: 1 điểm cho mỗi 10.000đ thực thanh toán
-                    pointsEarned = (int)(totalAmount / 10000m);
+                    pointsEarned = (int)(totalAmount / MoneyPerEarnedPoint);
                     customer.TotalPoints += pointsEarned;
                     customer.AccumulatedPoints += pointsEarned;
                     customer.LastTransactionDate = DateTime.Now;
 
-                    // Cập nhật hạng thành viên
                     if (customer.AccumulatedPoints >= 5000) customer.MembershipTier = "DIAMOND";
                     else if (customer.AccumulatedPoints >= 3000) customer.MembershipTier = "GOLD";
                     else if (customer.AccumulatedPoints >= 1000) customer.MembershipTier = "SILVER";
@@ -332,18 +339,18 @@ namespace MiniMart.Web.Controllers
                 var receipt = new ReceiptDto
                 {
                     InvoiceCode = invoice.InvoiceCode,
-                    StoreName = store?.Name ?? "MiniMart",
-                    StoreAddress = store?.Address ?? "",
-                    StorePhone = store?.Phone ?? "",
+                    StoreName = store.Name,
+                    StoreAddress = store.Address ?? "",
+                    StorePhone = store.Phone ?? "",
                     CashierName = cashier?.FullName ?? "Thu ngân",
                     CustomerName = customer?.FullName ?? "Khách lẻ",
                     CustomerPhone = customer?.Phone ?? "",
                     CreatedAt = invoice.CreatedAt,
                     Subtotal = subtotal,
-                    DiscountAmount = discount,
+                    DiscountAmount = 0,
                     PointsDiscount = pointsDiscount,
                     TotalAmount = totalAmount,
-                    PaymentMethod = req.PaymentMethod,
+                    PaymentMethod = paymentMethod,
                     CashReceived = invoice.CashReceived ?? totalAmount,
                     CashChange = cashChange,
                     PointsEarned = pointsEarned,
@@ -358,6 +365,52 @@ namespace MiniMart.Web.Controllers
                 await transaction.RollbackAsync();
                 return Json(new { success = false, message = "Lỗi thanh toán: " + ex.Message });
             }
+        }
+
+        /// <summary>
+        /// Khuyến mãi đang chạy: đã bắt đầu và chưa qua hết ngày kết thúc
+        /// (ngày kết thúc được tính trọn ngày, kể cả khi lưu là 00:00).
+        /// </summary>
+        private async Task<List<Promotion>> GetActivePromotionsAsync()
+        {
+            var now = DateTime.Now;
+            var today = DateTime.Today;
+            return await _context.Promotions
+                .Include(pr => pr.PromotionItems)
+                .Where(pr => pr.IsActive && pr.StartDate <= now && pr.EndDate >= today)
+                .ToListAsync();
+        }
+
+        private record PriceInfo(decimal BasePrice, decimal UnitPrice, string PromoTag, int BuyQty, int GetQty);
+
+        private static PriceInfo CalculatePrice(Product p, StoreProduct? sp, List<Promotion> activePromos)
+        {
+            decimal basePrice = Math.Max(0, sp?.Price ?? p.DefaultPrice ?? 0);
+
+            var promoItem = activePromos
+                .SelectMany(pr => pr.PromotionItems.Select(pi => new { Promo = pr, Item = pi }))
+                .FirstOrDefault(x => x.Item.ProductId == p.Id);
+
+            if (promoItem != null)
+            {
+                var item = promoItem.Item;
+                switch (promoItem.Promo.PromoType)
+                {
+                    case "PERCENTAGE" when item.DiscountPercent is > 0 and <= 100:
+                        var pct = item.DiscountPercent.Value;
+                        var discounted = Math.Round(basePrice * (1 - (decimal)pct / 100m), 0);
+                        return new PriceInfo(basePrice, Math.Max(0, discounted), $"-{pct}%", 0, 0);
+
+                    case "FIXED_AMOUNT" when item.DiscountAmount is > 0:
+                        var amt = item.DiscountAmount.Value;
+                        return new PriceInfo(basePrice, Math.Max(0, basePrice - amt), $"-{amt:N0}đ", 0, 0);
+
+                    case "BUY_X_GET_Y" when item.BuyQty is > 0 && item.GetQty is > 0:
+                        return new PriceInfo(basePrice, basePrice, $"Mua {item.BuyQty} tặng {item.GetQty}", item.BuyQty.Value, item.GetQty.Value);
+                }
+            }
+
+            return new PriceInfo(basePrice, basePrice, "", 0, 0);
         }
 
         private long GetCurrentStoreId()
@@ -375,4 +428,3 @@ namespace MiniMart.Web.Controllers
         }
     }
 }
-

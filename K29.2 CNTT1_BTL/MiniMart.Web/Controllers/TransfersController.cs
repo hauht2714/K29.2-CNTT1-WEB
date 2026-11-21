@@ -216,6 +216,17 @@ namespace MiniMart.Web.Controllers
                 return Json(new { success = false, message = "Chi nhánh xuất và chi nhánh nhận không được trùng nhau." });
             }
 
+            if (model.Items.Any(i => i.Quantity < 1 || i.Quantity > 100000))
+            {
+                return Json(new { success = false, message = "Số lượng chuyển của mỗi sản phẩm phải từ 1 đến 100.000." });
+            }
+
+            var storeCount = await _context.Stores.CountAsync(s => s.Id == model.FromStoreId || s.Id == model.ToStoreId);
+            if (storeCount != 2)
+            {
+                return Json(new { success = false, message = "Chi nhánh xuất hoặc chi nhánh nhận không tồn tại." });
+            }
+
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -243,6 +254,12 @@ namespace MiniMart.Web.Controllers
                     var sourceSp = await _context.StoreProducts
                         .Include(s => s.Product)
                         .FirstOrDefaultAsync(s => s.Id == item.StoreProductId);
+
+                    if (sourceSp != null && sourceSp.StoreId != model.FromStoreId)
+                    {
+                        await transaction.RollbackAsync();
+                        return Json(new { success = false, message = $"Sản phẩm '{sourceSp.Product?.Name}' không thuộc chi nhánh xuất đã chọn." });
+                    }
 
                     if (sourceSp == null || sourceSp.StockQuantity < item.Quantity)
                     {
@@ -294,6 +311,9 @@ namespace MiniMart.Web.Controllers
                             destSp.StockQuantity += item.Quantity;
                             destSp.UpdatedAt = DateTime.Now;
                         }
+
+                        // Chuyển lô hàng (hạn dùng, giá nhập) sang kho nhận
+                        await StockBatchHelper.MoveAsync(_context, sourceSp, destSp, item.Quantity, sourceSp.Product?.LastImportPrice);
 
                         _context.InventoryTransactions.Add(new InventoryTransaction
                         {
@@ -407,6 +427,9 @@ namespace MiniMart.Web.Controllers
                         destSp.StockQuantity += qty;
                         destSp.UpdatedAt = DateTime.Now;
                     }
+
+                    // Lô hàng của phiếu đang vận chuyển vẫn nằm ở kho xuất cho tới khi nhận hàng
+                    await StockBatchHelper.MoveAsync(_context, item.StoreProduct, destSp, qty, item.StoreProduct.Product?.LastImportPrice);
 
                     _context.InventoryTransactions.Add(new InventoryTransaction
                     {

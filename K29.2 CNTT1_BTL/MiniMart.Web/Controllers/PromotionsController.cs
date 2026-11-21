@@ -102,14 +102,10 @@ namespace MiniMart.Web.Controllers
                 return Json(new { success = false, message = "Vui lòng nhập tên chương trình khuyến mãi." });
             }
 
-            if (model.EndDate < model.StartDate)
+            var validationError = await ValidatePromotionAsync(model);
+            if (validationError != null)
             {
-                return Json(new { success = false, message = "Ngày kết thúc không được nhỏ hơn ngày bắt đầu." });
-            }
-
-            if (model.Items == null || !model.Items.Any())
-            {
-                return Json(new { success = false, message = "Vui lòng thêm ít nhất một sản phẩm áp dụng khuyến mãi." });
+                return Json(new { success = false, message = validationError });
             }
 
             long nextPromoId = (await _context.Promotions.MaxAsync(p => (long?)p.Id) ?? 0) + 1;
@@ -204,9 +200,10 @@ namespace MiniMart.Web.Controllers
                 return Json(new { success = false, message = "Không tìm thấy chương trình khuyến mãi." });
             }
 
-            if (model.EndDate < model.StartDate)
+            var validationError = await ValidatePromotionAsync(model);
+            if (validationError != null)
             {
-                return Json(new { success = false, message = "Ngày kết thúc không được nhỏ hơn ngày bắt đầu." });
+                return Json(new { success = false, message = validationError });
             }
 
             promo.Name = model.Name.Trim();
@@ -285,6 +282,59 @@ namespace MiniMart.Web.Controllers
 
             TempData["SuccessMessage"] = $"Đã xóa chương trình '{promo.Name}'.";
             return RedirectToAction(nameof(Index));
+        }
+
+        private static readonly string[] AllowedPromoTypes = { "PERCENTAGE", "FIXED_AMOUNT", "BUY_X_GET_Y" };
+
+        /// <summary>Trả về thông báo lỗi, hoặc null nếu dữ liệu khuyến mãi hợp lệ.</summary>
+        private async Task<string?> ValidatePromotionAsync(PromotionDto? model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Name))
+                return "Vui lòng nhập tên chương trình khuyến mãi.";
+
+            if (model.EndDate.Date < model.StartDate.Date)
+                return "Ngày kết thúc không được nhỏ hơn ngày bắt đầu.";
+
+            if (!AllowedPromoTypes.Contains(model.PromoType))
+                return "Loại khuyến mãi không hợp lệ.";
+
+            if (model.Items == null || !model.Items.Any())
+                return "Vui lòng thêm ít nhất một sản phẩm áp dụng khuyến mãi.";
+
+            if (model.Items.GroupBy(i => i.ProductId).Any(g => g.Count() > 1))
+                return "Mỗi sản phẩm chỉ được thêm một lần trong chương trình.";
+
+            var productIds = model.Items.Select(i => i.ProductId).Distinct().ToList();
+            var products = await _context.Products
+                .Where(p => productIds.Contains(p.Id))
+                .Select(p => new { p.Id, p.Name, p.DefaultPrice })
+                .ToDictionaryAsync(p => p.Id);
+
+            foreach (var it in model.Items)
+            {
+                if (!products.TryGetValue(it.ProductId, out var product))
+                    return $"Sản phẩm mã #{it.ProductId} không tồn tại.";
+
+                switch (model.PromoType)
+                {
+                    case "PERCENTAGE":
+                        if (!it.DiscountPercent.HasValue || it.DiscountPercent <= 0 || it.DiscountPercent > 100)
+                            return $"'{product.Name}': phần trăm giảm phải lớn hơn 0 và tối đa 100%.";
+                        break;
+                    case "FIXED_AMOUNT":
+                        if (!it.DiscountAmount.HasValue || it.DiscountAmount <= 0)
+                            return $"'{product.Name}': số tiền giảm phải lớn hơn 0.";
+                        if (product.DefaultPrice.HasValue && it.DiscountAmount > product.DefaultPrice)
+                            return $"'{product.Name}': số tiền giảm không được lớn hơn giá bán ({product.DefaultPrice:N0}đ).";
+                        break;
+                    case "BUY_X_GET_Y":
+                        if (!it.BuyQty.HasValue || it.BuyQty < 1 || !it.GetQty.HasValue || it.GetQty < 1)
+                            return $"'{product.Name}': số lượng mua và số lượng tặng phải từ 1 trở lên.";
+                        break;
+                }
+            }
+
+            return null;
         }
     }
 }

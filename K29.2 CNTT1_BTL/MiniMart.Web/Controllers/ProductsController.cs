@@ -87,6 +87,16 @@ namespace MiniMart.Web.Controllers
                 ModelState.AddModelError("Barcode", "Mã vạch đã được gán cho sản phẩm khác.");
             }
 
+            if (product.DefaultPrice.HasValue && product.DefaultPrice < 0)
+            {
+                ModelState.AddModelError("DefaultPrice", "Giá bán không được âm.");
+            }
+
+            if (initialStock < 0 || initialStock > 100000)
+            {
+                ModelState.AddModelError(string.Empty, "Tồn kho ban đầu phải từ 0 đến 100.000.");
+            }
+
             if (ModelState.IsValid)
             {
                 product.CreatedAt = DateTime.Now;
@@ -178,6 +188,11 @@ namespace MiniMart.Web.Controllers
                 await _context.Products.AnyAsync(p => p.Barcode == product.Barcode && p.Id != id))
             {
                 ModelState.AddModelError("Barcode", "Mã vạch đã được gán cho sản phẩm khác.");
+            }
+
+            if (product.DefaultPrice.HasValue && product.DefaultPrice < 0)
+            {
+                ModelState.AddModelError("DefaultPrice", "Giá bán không được âm.");
             }
 
             if (ModelState.IsValid)
