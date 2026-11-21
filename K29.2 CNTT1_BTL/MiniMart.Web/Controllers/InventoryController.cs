@@ -241,6 +241,16 @@ namespace MiniMart.Web.Controllers
             sp.StockQuantity = newQuantity;
             sp.UpdatedAt = DateTime.Now;
 
+            // Đồng bộ lô hàng: hao hụt thì trừ lô hết hạn sớm nhất trước, thừa thì thêm một lô điều chỉnh
+            if (diff < 0)
+            {
+                await StockBatchHelper.DeductAsync(_context, sp.Id, -diff);
+            }
+            else
+            {
+                StockBatchHelper.AddBatch(_context, sp, diff, sp.Product.LastImportPrice, null);
+            }
+
             _context.InventoryTransactions.Add(new InventoryTransaction
             {
                 StoreId = sp.StoreId,

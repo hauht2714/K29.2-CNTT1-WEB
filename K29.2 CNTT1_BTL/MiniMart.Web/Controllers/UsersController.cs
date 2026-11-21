@@ -64,15 +64,21 @@ namespace MiniMart.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AppUser model, string rawPassword)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == model.Username.Trim()))
+            // Form không gửi trường Password (mật khẩu đã băm) mà gửi rawPassword
+            ModelState.Remove(nameof(AppUser.Password));
+            ModelState.Remove(nameof(AppUser.Status));
+
+            if (await _context.Users.AnyAsync(u => u.Username == (model.Username ?? "").Trim()))
             {
                 ModelState.AddModelError("Username", "Tên đăng nhập đã được sử dụng.");
             }
 
             if (string.IsNullOrWhiteSpace(rawPassword) || rawPassword.Length < 6)
             {
-                ModelState.AddModelError("Password", "Mật khẩu phải có ít nhất 6 ký tự.");
+                ModelState.AddModelError(string.Empty, "Mật khẩu phải có ít nhất 6 ký tự.");
             }
+
+            await ValidateUserFieldsAsync(model, null);
 
             if (ModelState.IsValid)
             {
@@ -121,6 +127,10 @@ namespace MiniMart.Web.Controllers
                 return NotFound();
             }
 
+            // Form sửa không gửi mật khẩu; mật khẩu được đổi qua chức năng "Đặt lại mật khẩu"
+            ModelState.Remove(nameof(AppUser.Password));
+            await ValidateUserFieldsAsync(model, id);
+
             if (ModelState.IsValid)
             {
                 user.FullName = model.FullName;
@@ -138,6 +148,36 @@ namespace MiniMart.Web.Controllers
 
             ViewBag.Stores = new SelectList(await _context.Stores.Where(s => s.Status == "ACTIVE").ToListAsync(), "Id", "Name", model.StoreId);
             return View(model);
+        }
+
+        private static readonly string[] AllowedRoles = { "ADMIN", "STORE_MANAGER", "CASHIER", "WAREHOUSE_STAFF" };
+        private static readonly string[] AllowedStatuses = { "ACTIVE", "DISABLED", "LOCKED" };
+
+        private async Task ValidateUserFieldsAsync(AppUser model, long? currentUserId)
+        {
+            if (!AllowedRoles.Contains(model.Role))
+            {
+                ModelState.AddModelError("Role", "Vai trò không hợp lệ.");
+            }
+
+            if (currentUserId.HasValue && !AllowedStatuses.Contains(model.Status))
+            {
+                ModelState.AddModelError("Status", "Trạng thái không hợp lệ.");
+            }
+
+            if (model.StoreId.HasValue && !await _context.Stores.AnyAsync(s => s.Id == model.StoreId))
+            {
+                ModelState.AddModelError("StoreId", "Chi nhánh không tồn tại.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                var email = model.Email.Trim();
+                if (await _context.Users.AnyAsync(u => u.Email == email && u.Id != (currentUserId ?? 0)))
+                {
+                    ModelState.AddModelError("Email", "Email đã được dùng cho nhân viên khác.");
+                }
+            }
         }
 
         [HttpPost]

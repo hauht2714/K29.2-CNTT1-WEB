@@ -10,6 +10,10 @@
 
             <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="All" class="alert alert-danger small py-2"></div>
+                }
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="Username" />
 

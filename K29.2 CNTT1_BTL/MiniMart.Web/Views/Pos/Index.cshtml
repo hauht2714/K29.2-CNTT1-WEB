@@ -361,8 +361,22 @@
     </div>
 </div>
 
+@Html.AntiForgeryToken()
+
 @section Scripts {
 <script>
+    // Số món được tặng theo khuyến mãi "Mua X tặng Y" (server cũng tính lại y hệt)
+    function freeQty(i) {
+        if (!(i.buyQty > 0 && i.getQty > 0)) return 0;
+        return Math.floor(i.quantity / (i.buyQty + i.getQty)) * i.getQty;
+    }
+    function lineTotal(i) {
+        return i.unitPrice * (i.quantity - freeQty(i));
+    }
+    function cartSubtotal() {
+        return cart.reduce((s, i) => s + lineTotal(i), 0);
+    }
+
     let products = [];
     let currentCategory = '';
 
@@ -524,7 +538,7 @@
     }
 
     function updateVietQr() {
-        const subtotal = cart.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+        const subtotal = cartSubtotal();
         let pointsDiscount = 0;
         if (currentCustomer && $('#chkUsePoints').is(':checked')) {
             const maxPoints = Math.floor(subtotal / 1000);
@@ -632,6 +646,8 @@
                 unitPrice: p.price,
                 unit: p.unit,
                 maxStock: p.stockQuantity,
+                buyQty: p.buyQty || 0,
+                getQty: p.getQty || 0,
                 quantity: 1
             });
         }
@@ -660,12 +676,13 @@
         updateTabBadges();
 
         cart.forEach((item, idx) => {
-            const sub = item.unitPrice * item.quantity;
+            const sub = lineTotal(item);
+            const free = freeQty(item);
             const row = $(`
                 <div class="cart-row">
                     <div style="flex: 1; min-width: 0; padding-right: 8px;">
                         <div class="fw-semibold small text-truncate" title="${item.productName}">${item.productName}</div>
-                        <div class="text-muted" style="font-size: 11px;">${Number(item.unitPrice).toLocaleString()} đ / ${item.unit}</div>
+                        <div class="text-muted" style="font-size: 11px;">${Number(item.unitPrice).toLocaleString()} đ / ${item.unit}${free > 0 ? ` <span class="text-danger fw-semibold">(tặng ${free})</span>` : ''}</div>
                     </div>
                     <div class="d-flex align-items-center gap-1 me-2">
                         <button type="button" class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
@@ -705,7 +722,7 @@
     }
 
     function updateTotals() {
-        const subtotal = cart.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+        const subtotal = cartSubtotal();
         $('#lblSubtotal').text(Number(subtotal).toLocaleString() + ' đ');
 
         let pointsDiscount = 0;
@@ -736,7 +753,7 @@
 
     function setCash(amount, isExact = false) {
         if (isExact) {
-            const subtotal = cart.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+            const subtotal = cartSubtotal();
             const ptsDisc = ($('#chkUsePoints').is(':checked') && currentCustomer) ? Math.min(currentCustomer.totalPoints, Math.floor(subtotal / 1000)) * 1000 : 0;
             $('#txtCashReceived').val(Math.max(0, subtotal - ptsDisc));
         } else {
@@ -772,7 +789,7 @@
             return;
         }
 
-        const subtotal = cart.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+        const subtotal = cartSubtotal();
         let pointsToUse = 0;
         if (currentCustomer && $('#chkUsePoints').is(':checked')) {
             pointsToUse = Math.min(currentCustomer.totalPoints, Math.floor(subtotal / 1000));
@@ -807,6 +824,7 @@
             url: '/Pos/Checkout',
             type: 'POST',
             contentType: 'application/json',
+            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() },
             data: JSON.stringify(payload),
             success: function (res) {
                 $('#btnCheckout').prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i> THANH TOÁN (F9)');
